@@ -17,7 +17,7 @@ export const HomeScreen =({navigation}) => {
         
           <Button block blue 
           onPress={()=>navigation.navigate('Camera')}>
-          <Text>Read Text</Text>
+          <Text>Read Text From pic</Text>
           
           </Button>
 
