@@ -1,49 +1,50 @@
-import React, { Component   } from 'react';
-import 'react-native-gesture-handler';
+import React, { useState, useEffect, Component } from 'react';
+import { Text, View, TouchableOpacity } from 'react-native';
 import { Camera } from 'expo-camera';
-import {Constants,  ImagePicker, Text } from 'expo';
-import * as Permissions from 'expo-permissions';
-import { Button, View, StyleSheet, Alert } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
 
+export const XCamera =({navigation}) => {
+  const [hasPermission, setHasPermission] = useState(null);
+  const [type, setType] = useState(Camera.Constants.Type.back);
 
-export default class Xcamera extends Component{
-  constructor(props){
-    super(props);
-    this.state = {
-    hasPermission: null,
-    type: Camera.Constants.Type.back,
-    }
+  useEffect(() => {
+    (async () => {
+      const { status } = await Camera.requestPermissionsAsync();
+      setHasPermission(status === 'granted');
+    })();
+  }, []);
+
+  if (hasPermission === null) {
+    return <View />;
   }
-  async UNSAFE_componentWillMount() {
-    const { status } = await Permissions.askAsync(Permissions.CAMERA);
-    this.setState({ hasPermission: status === 'granted' });
+  if (hasPermission === false) {
+    return <Text>No access to camera</Text>;
   }
-
-
-  /*async UNSAFE_componentWillMount(){
-    const {  status } = await Permissions.askAsync('Permissions.CAMERA');
-    this.setState({hasPermission:status === 'granted'});
-  }
-*/
-  
-  render(){
-    this.UNSAFE_componentWillMount();
-    const { hasPermission } = this.state
-    if (hasPermission === null) {
-      return <View />;
-    } else if (hasPermission === false) {
-      return <Text>No access to camera</Text>;
-    } else {
-      return (
-          <View style={{ flex: 1 }}>
-            <Camera style={{ flex: 1 }} type={this.state.cameraType}>
-              
-            </Camera>
+  return (
+    <View style={{ flex: 1 }}>
+      <Camera style={{ flex: 1 }} type={type}>
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: 'transparent',
+            flexDirection: 'row',
+          }}>
+          <TouchableOpacity
+            style={{
+              flex: 0.1,
+              alignSelf: 'flex-end',
+              alignItems: 'center',
+            }}
+            onPress={() => {
+              setType(
+                type === Camera.Constants.Type.back
+                  ? Camera.Constants.Type.front
+                  : Camera.Constants.Type.back
+              );
+            }}>
+            <Text style={{ fontSize: 25, marginBottom: 50, color: 'white' }}> Flip </Text>
+          </TouchableOpacity>
         </View>
-      );
-    }
-  }
-  
+      </Camera>
+    </View>
+  );
 }

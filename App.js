@@ -1,52 +1,25 @@
-import React, { Component } from 'react';
-import { Entypo } from '@expo/vector-icons'; 
-import { Container, Header, Content, Button, View, StyleSheet, Alert, Text, Footer, FooterTab, Fab, Left, Body, Right, Title, Tab, Tabs } from 'native-base';
-//import  { Text } from 'react-native';
+import 'react-native-gesture-handler';
+import * as React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { HomeScreen } from './Home.js';
+import { XCamera } from './iCamera.js';
 
-export default class TabsExample extends Component {
+const Stack = createStackNavigator();
 
-   render() {
-        return (
-//	<Text> Hello World </Text>
-          
-          <Container>
-              
-        <Header>
-          <Left/>
-          <Body>
-            <Title>iseek</Title>
-          </Body>
-          <Right />
-        </Header>
-        
-          <Button block blue>
-          <Text>Read Text</Text>
-          </Button>
+const App = () => {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen
+          name="Home"
+          component={HomeScreen}
+          options={{ title: 'Welcometo the iSeek App' }}
+        />
+        <Stack.Screen name="Camera" component={XCamera} options={{title:'iSeek Camera'}}/>
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
 
-          <Button block blue>
-            <Text>Find Objects</Text>
-          </Button>
-
-        <Content />
-
-        <Footer>
-        
-          <FooterTab>
-            
-            <Button vertical>
-              <Text>FAQ</Text>
-            </Button>
-
-            <Button vertical >  
-              <Text>Settings</Text>
-            </Button>
-
-          </FooterTab>
-        </Footer>
-
-        
-      </Container>
-
-        );
-    }
-}
+export default App;
