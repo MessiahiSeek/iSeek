@@ -14,7 +14,7 @@ export default class TabsExample extends Component {
         <Header>
           <Left/>
           <Body>
-            <Title>iSeek</Title>
+            <Title>iseek</Title>
           </Body>
           <Right />
         </Header>
