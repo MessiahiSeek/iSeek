@@ -14,7 +14,7 @@ const App = () => {
         <Stack.Screen
           name="Home"
           component={HomeScreen}
-          options={{ title: 'Welcometo the iSeek Ap' }}
+          options={{ title: 'Welcometo the iSeek App' }}
         />
         <Stack.Screen name="Camera" component={XCamera} options={{title:'iSeek Camera'}}/>
       </Stack.Navigator>
