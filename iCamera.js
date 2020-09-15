@@ -1,10 +1,12 @@
-import React, { useState, useEffect, Component } from 'react';
-import { Text, View, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect, Component  } from 'react';
+import { Text, View, TouchableOpacity, ref, Button,  } from 'react-native';
 import { Camera } from 'expo-camera';
+import * as MediaLibrary from 'expo-media-library'
 
 export const XCamera =({navigation}) => {
   const [hasPermission, setHasPermission] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
+  //const useRef = useRef(null);
 
   useEffect(() => {
     (async () => {
@@ -12,6 +14,20 @@ export const XCamera =({navigation}) => {
       setHasPermission(status === 'granted');
     })();
   }, []);
+
+  snap = async () => {
+    if (this.camera) {
+      const options = { quality: 1, base64: true, fixOrientation: true, 
+        exif: true};
+        await this.camera.takePictureAsync(options).then(photo => {
+           photo.exif.Orientation = 1;            
+            console.log(photo.uri);   
+            MediaLibrary.saveToLibraryAsync(photo.uri);    
+            });  
+            
+    }
+  };
+  
 
   if (hasPermission === null) {
     return <View />;
@@ -21,7 +37,7 @@ export const XCamera =({navigation}) => {
   }
   return (
     <View style={{ flex: 1 }}>
-      <Camera style={{ flex: 1 }} type={type}>
+      <Camera style={{ flex: 1 }} type={type} ref={ref => { this.camera = ref; }}>
         <View
           style={{
             flex: 1,
@@ -43,6 +59,11 @@ export const XCamera =({navigation}) => {
             }}>
             <Text style={{ fontSize: 25, marginBottom: 50, color: 'white' }}> Flip </Text>
           </TouchableOpacity>
+        <Button
+        title="Press Me!"
+        onPress={async () =>  this.snap()}
+        color="#67f210"
+        />
         </View>
       </Camera>
     </View>
