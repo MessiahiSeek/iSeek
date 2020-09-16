@@ -1,5 +1,6 @@
 import React, { useState, useEffect, Component  } from 'react';
-import { Text, View, TouchableOpacity, ref, Button,  } from 'react-native';
+import { Text, View, TouchableOpacity, ref, Button, StyleSheet,  } from 'react-native';
+import {  Icon, Layout, Spinner } from '@ui-kitten/components';
 import { Camera } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library'
 
@@ -57,16 +58,16 @@ export const XCamera =({navigation}) => {
                   : Camera.Constants.Type.back
               );
             }}>
-            <Text style={styles.text}> Flip </Text>
+            <Text > Flip </Text>
           </TouchableOpacity>
         <Button
         title="Press Me!"
         onPress={async () =>  this.snap()}
-        color="#67f210"
-        backgroundColor="#fb9092"
+        expo
         />
         </View>
       </Camera>
     </View>
   );
 }
+
