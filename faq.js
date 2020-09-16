@@ -1,14 +1,12 @@
 import React, { useState, useEffect, Component  } from 'react';
 import { Text, View, Switch, StyleSheet  } from 'react-native';
-import { Left, Right, Separator } from 'native-base';
+import { Left, Right, Separator, Container, Content, Card, CardItem } from 'native-base';
 import { divide } from 'react-native-reanimated';
-import { Collapse,CollapseHeader, CollapseBody, AccordionList} from 'accordion-collapse-react-native';
-
+import SimpleAccordion from 'react-native-simple-accordian';
 
 
 export const faqpage =({navigation}) => {
-  const [expanded, setExpanded] = React.useState(true);
-  const handlePress = () => setExpanded(!expanded);
+  
 
   return (
     <View style={styles.container}>
@@ -22,6 +20,7 @@ export const faqpage =({navigation}) => {
 
         <Text style={styles.Text}>Welcome to iSeek!
         Below are some common questions you may have about the app</Text>
+
 
     </View>
   );

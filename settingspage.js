@@ -1,7 +1,5 @@
 import React, { useState, useEffect, Component  } from 'react';
 import { Text, View, Switch, StyleSheet  } from 'react-native';
-import { Camera } from 'expo-camera';
-import * as MediaLibrary from 'expo-media-library'
 import { Left, Right, Separator } from 'native-base';
 import { divide } from 'react-native-reanimated';
 
@@ -20,26 +18,17 @@ export const settingspage =({navigation}) => {
             flexDirection: 'row',
           }}>
               
-        
 
-
-          <Switch  
+        <Switch style={styles.switch}
         trackColor={{ false: "#fff", true: "#22ff00" }}
         thumbColor={isEnabled ? "#fff" : "#fff"}
         ios_backgroundColor="#D2D2D2"
         onValueChange={toggleSwitch}
-        value={isEnabled}
-      />
+        value={isEnabled} 
+        />
+          
 
-          <Separator />
-
-          <Switch  
-        trackColor={{ false: "#fff", true: "#22ff00" }}
-        thumbColor={isEnabled ? "#fff" : "#fff"}
-        ios_backgroundColor="#D2D2D2"
-        onValueChange={toggleSwitch}
-        value={isEnabled}
-      />
+         
 
         </View>
     </View>
@@ -49,12 +38,13 @@ export const settingspage =({navigation}) => {
 const styles = StyleSheet.create({
     container: {
       position:'relative',
-      padding: 0,
+      paddingTop: 20,
+      paddingRight: 10,
       flexDirection: 'column',
-      alignItems: 'center'
+      alignItems: 'flex-end'
     },
     
     switch: {
-        padding: 25
+      
     }
   });
