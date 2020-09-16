@@ -2,18 +2,15 @@ import React, { Component } from 'react';
 import { Entypo } from '@expo/vector-icons'; 
 import { Container, Header, Content, Button, View, StyleSheet, Alert, Text, Footer, FooterTab, Fab, Left, Body, Right, Title, Tab, Tabs } from 'native-base';
 import { XCamera } from './iCamera.js';
+import { settingspage } from './settingspage.js';
+
+
 
 export const HomeScreen =({navigation}) => {
         return (
           <Container>
               
-        <Header>
-          <Left/>
-          <Body>
-            <Title>iSeek</Title>
-          </Body>
-          <Right />
-        </Header>
+        
         
           <Button block blue 
           onPress={()=>navigation.navigate('Camera')}>
@@ -31,11 +28,13 @@ export const HomeScreen =({navigation}) => {
         
           <FooterTab>
             
-            <Button vertical>
+            <Button vertical
+            onPress={()=>navigation.navigate('Faq')}> 
               <Text>FAQ</Text>
             </Button>
 
-            <Button vertical >  
+            <Button vertical 
+            onPress={()=>navigation.navigate('Settings')}>  
               <Text>Settings</Text>
             </Button>
 
@@ -47,4 +46,6 @@ export const HomeScreen =({navigation}) => {
 
         );
     };
+
+    
 

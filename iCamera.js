@@ -42,7 +42,7 @@ export const XCamera =({navigation}) => {
           style={{
             flex: 1,
             backgroundColor: 'transparent',
-            flexDirection: 'row',
+            flexDirection: '',
           }}>
           <TouchableOpacity
             style={{
