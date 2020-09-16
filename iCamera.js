@@ -57,12 +57,13 @@ export const XCamera =({navigation}) => {
                   : Camera.Constants.Type.back
               );
             }}>
-            <Text style={{ fontSize: 25, marginBottom: 50, color: 'white' }}> Flip </Text>
+            <Text style={styles.text}> Flip </Text>
           </TouchableOpacity>
         <Button
         title="Press Me!"
         onPress={async () =>  this.snap()}
         color="#67f210"
+        backgroundColor="#fb9092"
         />
         </View>
       </Camera>
