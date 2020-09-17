@@ -30,7 +30,9 @@
     "react-native-screens": "~2.9.0",
     "react-native-simple-accordian": "^1.0.2",
     "react-native-svg": "12.1.0",
-    "react-native-web": "~0.11.7"
+    "react-native-web": "~0.11.7",
+    "semantic-ui-css": "^2.4.1",
+    "semantic-ui-react": "^1.2.1"
   },
   "devDependencies": {
     "@babel/core": "^7.11.6",

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, Component  } from 'react';
-import { Text, View, TouchableOpacity, ref, Button, StyleSheet,  } from 'react-native';
-import {  Icon, Layout, Spinner } from '@ui-kitten/components';
+import { Text, View, TouchableOpacity, ref, StyleSheet,  } from 'react-native';
+import {  Button, ButtonGroup, Icon, Layout, Spinner } from '@ui-kitten/components';
 import { Camera } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library'
 
@@ -39,35 +39,33 @@ export const XCamera =({navigation}) => {
   return (
     <View style={{ flex: 1 }}>
       <Camera style={{ flex: 1 }} type={type} ref={ref => { this.camera = ref; }}>
-        <View
-          style={{
-            flex: 1,
-            backgroundColor: 'transparent',
-            flexDirection: '',
-          }}>
-          <TouchableOpacity
-            style={{
-              flex: 0.1,
-              alignSelf: 'flex-end',
-              alignItems: 'center',
-            }}
-            onPress={() => {
+        <View>
+          <ButtonGroup style={styles.buttonGroup} size='large'>
+        <Button onPress={async () =>  this.snap()}>
+          Camera</Button>
+          <Button onPress={() => {
               setType(
                 type === Camera.Constants.Type.back
                   ? Camera.Constants.Type.front
                   : Camera.Constants.Type.back
               );
-            }}>
-            <Text > Flip </Text>
-          </TouchableOpacity>
-        <Button
-        title="Press Me!"
-        onPress={async () =>  this.snap()}
-        expo
-        />
+            }}>Flip</Button>
+        </ButtonGroup>
         </View>
       </Camera>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  
+  buttonGroup: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    paddingTop: '135%',
+    paddingLeft: '20%',
+    margin: 6,
+  },
+});
 

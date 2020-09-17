@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Entypo } from '@expo/vector-icons'; 
-import { Container, Header, Content, Button, View, StyleSheet, Alert, Text, Footer, FooterTab, Fab, Left, Body, Right, Title, Tab, Tabs } from 'native-base';
+import { Container, Header, Content, View, StyleSheet, Alert, Text, Footer, FooterTab, Fab, Left, Body, Right, Title, Tab, Tabs, Styles } from 'native-base';
+import {  Button, ButtonGroup, Icon, Layout, Spinner, Divider } from '@ui-kitten/components';
 import { XCamera } from './iCamera.js';
 import { settingspage } from './settingspage.js';
 
@@ -8,43 +9,37 @@ import { settingspage } from './settingspage.js';
 
 export const HomeScreen =({navigation}) => {
         return (
+
+
+          
           <Container>
-              
-        
-        
-          <Button block blue 
+          <Divider />  
+             
+          <Button
           onPress={()=>navigation.navigate('Camera')}>
           <Text>Read Text From pic</Text>
-          
           </Button>
 
-          <Button block blue>
+          <Divider />
+
+          <Button onPress={()=>navigation.navigate('Camera')}>
             <Text>Find Objects</Text>
           </Button>
 
-        <Content />
+          <Divider />
 
-        <Footer>
-        
-          <FooterTab>
-            
-            <Button vertical
-            onPress={()=>navigation.navigate('Faq')}> 
+          <Button onPress={()=>navigation.navigate('Faq')}> 
               <Text>FAQ</Text>
             </Button>
 
-            <Button vertical 
-            onPress={()=>navigation.navigate('Settings')}>  
+            <Divider />
+
+            <Button onPress={()=>navigation.navigate('Settings')}>  
               <Text>Settings</Text>
             </Button>
 
-          </FooterTab>
-        </Footer>
-
-        
+        <Content />
       </Container>
 
         );
-    };
-    
-
+    }
