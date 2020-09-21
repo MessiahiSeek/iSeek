@@ -57,12 +57,83 @@ export const XCamera =({navigation}) => {
         exif: true};
         await this.camera.takePictureAsync(options).then(photo => {
            photo.exif.Orientation = 1;            
-            console.log(photo.uri);   
-            MediaLibrary.saveToLibraryAsync(photo.uri);    
-            });  
+           console.log(photo.base64);   
+           //MediaLibrary.saveToLibraryAsync(photo.uri); 
             
-    }
-  };
+
+
+
+
+   /*        fetch('http://127.0.0.1:5000/image',
+           {
+             method: 'POST',
+             headers:{
+               Accept: 'application/json',
+               'Content-Type': 'application/json',
+             },
+             body: JSON.stringify({
+               pictureString: photo.base64,
+             }),
+           }).then((response) => response.json())
+           .then((json) => {
+             return json.helloWorld;
+           })
+         
+         
+         
+         */
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         });
+
+           console.log("hello world")
+           /*const body =  response.json();
+           if(body.statusCode ==  200){
+             var objectDetectedPhoto = body.pictureString;
+           }*/
+     }  
+   }
+   /* Test STUB for endpoint
+ const getResponse = () =>{
+   fetch('http://127.0.0.1:5000/image',
+           {
+             method: 'POST',
+             headers:{
+               Accept: 'application/json',
+               'Content-Type': 'application/json',
+             },
+             body: JSON.stringify({
+               pictureString: photo.base64,
+             }),
+           }).then((response) => response.json())
+           .then((json) => {
+             return json.helloWorld;
+           })
+ }*/
+ getTime =  () =>{ 
+   console.log("hello");
+   let response =  fetch('https://192.168.1.6/time').then((resp)=>{
+     console.log("hello agagin")
+     return resp.json()}).then(
+       (
+         (json)=>{
+     console.log(json);
+     const tim = json.time;
+     //tim = tim.toString();
+     console.log(tim);
+   }));
+   
+ };
 
   
   startRecording = async () => {
