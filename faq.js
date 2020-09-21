@@ -18,7 +18,7 @@ export const faqpage =({navigation}) => {
               <View styleName="vertical">
               <View styleName="horizontal space-between">
                 <Subtitle>FAQ 1</Subtitle>
-                <Caption>iSeek was founded in 2020</Caption>
+                <Caption>iSeek was founded in 2020!</Caption>
               </View>
                 <Text styleName="multiline"></Text>
               </View>
