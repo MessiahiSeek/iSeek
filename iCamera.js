@@ -1,13 +1,48 @@
 import React, { useState, useEffect, Component  } from 'react';
-import { Text, View, TouchableOpacity, ref, StyleSheet,  } from 'react-native';
+import { Text, View, TouchableOpacity, ref, StyleSheet, ActivityIndicator  } from 'react-native';
 import {  Button, ButtonGroup, Icon, Layout, Spinner } from '@ui-kitten/components';
 import { Camera } from 'expo-camera';
-import * as MediaLibrary from 'expo-media-library'
+import * as MediaLibrary from 'expo-media-library';
+import { Audio } from 'expo-av';
+import * as Permissions from 'expo-permissions';
+import * as FileSystem from 'expo-file-system';
+
+
+
+
+
+const recordingOptions = {
+  // android not currently in use, but parameters are required
+  android: {
+      extension: '.m4a',
+      outputFormat: Audio.RECORDING_OPTION_ANDROID_OUTPUT_FORMAT_MPEG_4,
+      audioEncoder: Audio.RECORDING_OPTION_ANDROID_AUDIO_ENCODER_AAC,
+      sampleRate: 44100,
+      numberOfChannels: 2,
+      bitRate: 128000,
+  },
+  ios: {
+      extension: '.wav',
+      audioQuality: Audio.RECORDING_OPTION_IOS_AUDIO_QUALITY_HIGH,
+      sampleRate: 44100,
+      numberOfChannels: 1,
+      bitRate: 128000,
+      linearPCMBitDepth: 16,
+      linearPCMIsBigEndian: false,
+      linearPCMIsFloat: false,
+  },
+};
+
 
 export const XCamera =({navigation}) => {
   const [hasPermission, setHasPermission] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
+  const [isRecording, setIsRecording] = useState(false);
+  const [isFetching, setIsFetching] = useState(false);
+  const [recording, setRecording] = useState(null);
   //const useRef = useRef(null);
+
+
 
   useEffect(() => {
     (async () => {
@@ -28,7 +63,80 @@ export const XCamera =({navigation}) => {
             
     }
   };
+
   
+  startRecording = async () => {
+    const { status } = await Permissions.askAsync(Permissions.AUDIO_RECORDING);
+    setHasPermission(status === 'granted');
+    if (status !== 'granted') return;
+    setIsRecording(true);
+    // some of these are not applicable, but are required
+    await Audio.setAudioModeAsync({
+      allowsRecordingIOS: true,
+      interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
+      playsInSilentModeIOS: true,
+      shouldDuckAndroid: true,
+      interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
+      playThroughEarpieceAndroid: true,
+  
+    });
+    const recording = new Audio.Recording();
+    try {
+      await recording.prepareToRecordAsync(recordingOptions);
+      await recording.startAsync();
+    } catch (error) {x
+      console.log(error);
+      stopRecording();
+    }
+    setRecording(recording);
+  }
+
+  const stopRecording = async () => {
+    setIsRecording(false);
+    try {
+        await recording.stopAndUnloadAsync();
+    } catch (error) {
+        // Do nothing -- we are already unloaded.
+    }
+}
+
+//code snippet that reads audio file and converts it to text
+
+const getTranscription = async () => {
+  setIsFetching(true);
+  try {
+      const info = await FileSystem.getInfoAsync(recording.getURI());
+      console.log(`FILE INFO: ${JSON.stringify(info)}`);
+      const uri = info.uri;
+      const formData = new FormData();
+      formData.append('file', {
+          uri,
+          type: 'audio/x-wav',
+          name: 'speech2text'
+      });
+      const response = await fetch(config.CLOUD_FUNCTION_URL, {
+          method: 'POST',
+          body: formData
+      });
+      const data = await response.json();
+      console.log(data);
+      setQuery(data.transcript);
+  } catch(error) {
+      console.log('There was an error reading file', error);
+      stopRecording();
+      // resetRecording();
+  }
+  setIsFetching(false);
+}
+const handleOnPressIn = () => {
+  startRecording();
+};
+
+const handleOnPressOut = () => {
+  stopRecording();
+  getTranscription();
+};
+
 
   if (hasPermission === null) {
     return <View />;
@@ -37,10 +145,10 @@ export const XCamera =({navigation}) => {
     return <Text>No access to camera</Text>;
   }
   return (
-    <View style={{ flex: 1 }}>
+    <View style={styles.container}>
       <Camera style={{ flex: 1 }} type={type} ref={ref => { this.camera = ref; }}>
         <View>
-          <ButtonGroup style={styles.buttonGroup} size='large'>
+          <ButtonGroup style={styles.buttongroup} size='large'>
         <Button onPress={async () =>  this.snap()}>
           Camera</Button>
           <Button onPress={() => {
@@ -50,21 +158,34 @@ export const XCamera =({navigation}) => {
                   : Camera.Constants.Type.back
               );
             }}>Flip</Button>
-        </ButtonGroup>
+        
+        <Button
+                    onPressIn={handleOnPressIn}
+                    onPressOut={handleOnPressOut}
+                >
+                    {isFetching && <ActivityIndicator/>}
+                    {!isFetching && <Text>Voice Search</Text>}
+                </Button>
+                </ButtonGroup>
         </View>
       </Camera>
     </View>
   );
+
+  
 }
 
 const styles = StyleSheet.create({
+
+  container: {
+    flex: 1,
+  },
   
-  buttonGroup: {
+  buttongroup: {
     flexDirection: 'row',
     alignItems: 'center',
-    flexWrap: 'wrap',
     paddingTop: '135%',
-    paddingLeft: '20%',
+    paddingLeft: '0.1%',
     margin: 6,
   },
 });
