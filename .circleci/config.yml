@@ -13,7 +13,7 @@ publish: &publish
 
     - run:
         name: Login into Expo
-        command: npx expo-cli login -u $Expo_UserID -p $Expo_PWD
+        command: npx expo-cli login -u $Expo_UserID -p Messiah!
 
     - run:
         name: Publish to Expo
