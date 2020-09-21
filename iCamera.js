@@ -59,10 +59,6 @@ export const XCamera =({navigation}) => {
            photo.exif.Orientation = 1;            
            console.log(photo.base64);   
            //MediaLibrary.saveToLibraryAsync(photo.uri); 
-            
-
-
-
 
    /*        fetch('http://127.0.0.1:5000/image',
            {
@@ -77,26 +73,9 @@ export const XCamera =({navigation}) => {
            }).then((response) => response.json())
            .then((json) => {
              return json.helloWorld;
-           })
-         
-         
-         
-         */
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
+           })*/
          });
-
-           console.log("hello world")
+//           console.log("hello world")
            /*const body =  response.json();
            if(body.statusCode ==  200){
              var objectDetectedPhoto = body.pictureString;
@@ -119,7 +98,7 @@ export const XCamera =({navigation}) => {
            .then((json) => {
              return json.helloWorld;
            })
- }*/
+ }
  getTime =  () =>{ 
    console.log("hello");
    let response =  fetch('https://192.168.1.6/time').then((resp)=>{
@@ -133,7 +112,7 @@ export const XCamera =({navigation}) => {
      console.log(tim);
    }));
    
- };
+ };*/
 
   
   startRecording = async () => {
