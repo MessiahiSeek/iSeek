@@ -1,11 +1,12 @@
 import React, { useState, useEffect, Component  } from 'react';
-import { Text, View, TouchableOpacity, ref, StyleSheet, ActivityIndicator  } from 'react-native';
+import { Text, View, TouchableOpacity, ref, StyleSheet, ActivityIndicator,Image  } from 'react-native';
 import {  Button, ButtonGroup, Icon, Layout, Spinner } from '@ui-kitten/components';
 import { Camera } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
 import { Audio } from 'expo-av';
 import * as Permissions from 'expo-permissions';
 import * as FileSystem from 'expo-file-system';
+import { render } from 'react-dom';
 
 
 
@@ -41,6 +42,7 @@ export const XCamera =({navigation}) => {
   const [isFetching, setIsFetching] = useState(false);
   const [recording, setRecording] = useState(null);
   //const useRef = useRef(null);
+  const [photoJson,setPhoto] = useState("");
 
 
 
@@ -51,16 +53,18 @@ export const XCamera =({navigation}) => {
     })();
   }, []);
 
+
   snap = async () => {
     if (this.camera) {
       const options = { quality: 1, base64: true, fixOrientation: true, 
         exif: true};
         await this.camera.takePictureAsync(options).then(photo => {
            photo.exif.Orientation = 1;            
-           console.log(photo.base64);   
+           //console.log(photo.base64); 
+           //getTime();  
            //MediaLibrary.saveToLibraryAsync(photo.uri); 
 
-   /*        fetch('http://127.0.0.1:5000/image',
+           fetch('http://ec2-3-23-33-73.us-east-2.compute.amazonaws.com:5000/image',
            {
              method: 'POST',
              headers:{
@@ -72,36 +76,18 @@ export const XCamera =({navigation}) => {
              }),
            }).then((response) => response.json())
            .then((json) => {
-             return json.helloWorld;
-           })*/
+             setPhoto(json.pictureResponse);
+             console.log(photoJson);
+             console.log("hello world")
+            })
          });
-//           console.log("hello world")
-           /*const body =  response.json();
-           if(body.statusCode ==  200){
-             var objectDetectedPhoto = body.pictureString;
-           }*/
+         
      }  
    }
-   /* Test STUB for endpoint
- const getResponse = () =>{
-   fetch('http://127.0.0.1:5000/image',
-           {
-             method: 'POST',
-             headers:{
-               Accept: 'application/json',
-               'Content-Type': 'application/json',
-             },
-             body: JSON.stringify({
-               pictureString: photo.base64,
-             }),
-           }).then((response) => response.json())
-           .then((json) => {
-             return json.helloWorld;
-           })
- }
+ /*
  getTime =  () =>{ 
    console.log("hello");
-   let response =  fetch('https://192.168.1.6/time').then((resp)=>{
+   let response =  fetch('http://ec2-3-23-33-73.us-east-2.compute.amazonaws.com:5000/time').then((resp)=>{
      console.log("hello agagin")
      return resp.json()}).then(
        (
@@ -194,12 +180,14 @@ const handleOnPressOut = () => {
   if (hasPermission === false) {
     return <Text>No access to camera</Text>;
   }
+  
   return (
+    
     <View style={styles.container}>
       <Camera style={{ flex: 1 }} type={type} ref={ref => { this.camera = ref; }}>
         <View>
           <ButtonGroup style={styles.buttongroup} size='large'>
-        <Button onPress={async () =>  this.snap()}>
+        <Button onPress={ async () =>  this.snap()}>
           Camera</Button>
           <Button onPress={() => {
               setType(
@@ -217,14 +205,15 @@ const handleOnPressOut = () => {
                     {!isFetching && <Text>Voice Search</Text>}
                 </Button>
                 </ButtonGroup>
+                <Image source ={{ uri:`data:image/gif;base64,${photoJson}`}} />
         </View>
       </Camera>
     </View>
-  );
-
-  
-}
-
+   ); 
+  }
+          
+        
+      
 const styles = StyleSheet.create({
 
   container: {
@@ -239,4 +228,3 @@ const styles = StyleSheet.create({
     margin: 6,
   },
 });
-
