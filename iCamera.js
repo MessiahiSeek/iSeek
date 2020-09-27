@@ -184,8 +184,11 @@ const handleOnPressOut = () => {
   return (
     
     <View style={styles.container}>
+      
       <Camera style={{ flex: 1 }} type={type} ref={ref => { this.camera = ref; }}>
         <View>
+        {(photoJson != "")  && (<Image source ={{ uri:`data:image/gif;base64,${photoJson}`}} 
+      style={{alignContent:'center',justifyContent:'center',width:400,height:600}}/>)}
           <ButtonGroup style={styles.buttongroup} size='large'>
         <Button onPress={ async () =>  this.snap()}>
           Camera</Button>
@@ -205,7 +208,7 @@ const handleOnPressOut = () => {
                     {!isFetching && <Text>Voice Search</Text>}
                 </Button>
                 </ButtonGroup>
-                <Image source ={{ uri:`data:image/gif;base64,${photoJson}`}} />
+                
         </View>
       </Camera>
     </View>
