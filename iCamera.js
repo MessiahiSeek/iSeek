@@ -78,7 +78,7 @@ export const XCamera =({navigation}) => {
            .then((json) => {
              setPhoto(json.pictureResponse);
              console.log(photoJson);
-             console.log("hello world")
+             //console.log("hello world")
             })
          });
          
