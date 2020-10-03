@@ -7,6 +7,7 @@ import { Audio } from 'expo-av';
 import * as Permissions from 'expo-permissions';
 import * as FileSystem from 'expo-file-system';
 import { render } from 'react-dom';
+import * as Speech from 'expo-speech';
 
 
 
@@ -150,11 +151,12 @@ const getTranscription = async () => {
           type: 'audio/x-wav',
           name: 'speech2text'
       });
-      const response = await fetch(config.CLOUD_FUNCTION_URL, {
+      const response = await fetch('http://ec2-3-23-33-73.us-east-2.compute.amazonaws.com:5000/recording', {
           method: 'POST',
           body: formData
       });
       const data = await response.json();
+      Speech.speak(data);
       console.log(data);
       setQuery(data.transcript);
   } catch(error) {
