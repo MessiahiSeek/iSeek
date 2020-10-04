@@ -1,31 +1,35 @@
 import React, { useState, useEffect, Component  } from 'react';
-import { Text, View, StyleSheet  } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity  } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons'
+import ActionButton from 'react-native-action-button';
 import { Left, Right, Separator } from 'native-base';
-import { Row, Icon, Divider, Caption, Rubik, Switch, switchOn, Button } from '@shoutem/ui';
+import { Row, Divider, Caption, Rubik, Switch, switchOn, Button } from '@shoutem/ui';
 
 
 export const settingspage =({navigation}) => {
 
   return (
-    <View>
-        <View 
-          style={{
-            flex: 1,
-            backgroundColor: 'transparent',
-            flexDirection: 'row',
-          }}>
-        </View>
+    <View style={styles.container}>
 
-        <Row styleName="small">
-          <Text>About</Text>
-          
-          <Button styleName="primary">
-  <Icon name="add-event" />
-  <Text>ADD TO CALENDAR</Text>
-</Button>
-
-        </Row>
 
     </View>
   );
 }
+
+
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#0e68b3',
+  },
+
+  actionButtonIcon: {
+    fontSize: 20,
+    height: 22,
+    color: 'white',
+  },
+  Subtitle: {
+    alignContent: "center",
+  },
+});

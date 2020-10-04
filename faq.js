@@ -1,52 +1,22 @@
 import React, { useState, useEffect, Component  } from 'react';
 import {  Switch, StyleSheet, SafeAreaView, ScrollView,  } from 'react-native';
 import { Left, Right, Separator, Container, View } from 'native-base';
+import Accordion from 'react-native-collapsible/Accordion';
 import { Avatar, Button, Text, List } from '@ui-kitten/components';
 import { Header } from '@react-navigation/stack';
-import { Divider, Caption, Rubik, Card, Subtitle, Image, Row } from '@shoutem/ui';
+import { Divider, Caption, Rubik, Card, Subtitle, Image, Row } from '@shoutem/ui'; 
+
 
 export const faqpage =({navigation}) => {
+
+  
 
   return(
   
 <SafeAreaView style={styles.container}>
             <ScrollView style={styles.scrollView}>
 
-
-
-            <Row>
-              <View styleName="vertical">
-              <View styleName="horizontal space-between">
-                <Subtitle>FAQ 1</Subtitle>
-                <Caption>iSeek was founded in 2020!</Caption>
-              </View>
-                <Text styleName="multiline"></Text>
-              </View>
-            </Row>
-
-            <Row>
-              <View styleName="vertical">
-              <View styleName="horizontal space-between">
-                <Subtitle>FAQ 2</Subtitle>
-                <Caption>To find objects in the room use the first button</Caption>
-              </View>
-                <Text styleName="multiline"></Text>
-              </View>
-            </Row>
-
-            <Row>
-              <View styleName="vertical">
-              <View styleName="horizontal space-between">
-                <Subtitle>FAQ 3</Subtitle>
-                <Caption>To read text, use the second button</Caption>
-              </View>
-                <Text styleName="multiline"></Text>
-              </View>
-            </Row>
-
-
-       
-
+            
           </ScrollView>
         </SafeAreaView>
 
