@@ -33,10 +33,12 @@
     "react-native-accordion": "^1.0.1",
     "react-native-action-button": "^2.8.5",
     "react-native-bar-collapsible": "^1.6.0",
+    "react-native-cards": "^1.1.4",
     "react-native-carousel-control": "^2.0.1",
     "react-native-collapsible": "^1.5.3",
     "react-native-gesture-handler": "~1.6.0",
     "react-native-linear-gradient": "~2.5.6",
+    "react-native-paper": "^4.2.0",
     "react-native-photo-view": "shoutem/react-native-photo-view#0ffa1481f6b6cb8663cb291b7db1d6644440584d",
     "react-native-reanimated": "~1.9.0",
     "react-native-safe-area-context": "~3.0.7",
@@ -48,7 +50,8 @@
     "react-native-webview": "9.4.0",
     "react-transition-group": "^4.4.1",
     "semantic-ui-css": "^2.4.1",
-    "semantic-ui-react": "^1.2.1"
+    "semantic-ui-react": "^1.2.1",
+    "toggle-switch-react-native": "^2.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.11.6",
