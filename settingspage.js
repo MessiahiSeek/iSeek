@@ -11,7 +11,7 @@ export const settingspage =({navigation}) => {
 
   return (
     <View style={styles.container}>
-      <Text>Light and Dark</Text>
+      <Text>Light / Dark</Text>
       <Switch
         value={true}
         onValueChange={(value) => setSwitch(value)}
