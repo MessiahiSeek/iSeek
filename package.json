@@ -24,6 +24,7 @@
     "expo-font": "~8.2.1",
     "expo-media-library": "~8.2.1",
     "expo-permissions": "~9.0.1",
+    "expo-speech": "~8.2.1",
     "expo-status-bar": "^1.0.2",
     "native-base": "^2.13.14",
     "primereact": "^5.0.0",
@@ -38,7 +39,10 @@
     "react-native-collapsible": "^1.5.3",
     "react-native-gesture-handler": "~1.6.0",
     "react-native-linear-gradient": "~2.5.6",
+<<<<<<< HEAD
     "react-native-paper": "^4.2.0",
+=======
+>>>>>>> df72ebc43c2180dd9c5acc6c20cc535028ed74d1
     "react-native-photo-view": "shoutem/react-native-photo-view#0ffa1481f6b6cb8663cb291b7db1d6644440584d",
     "react-native-reanimated": "~1.9.0",
     "react-native-safe-area-context": "~3.0.7",
