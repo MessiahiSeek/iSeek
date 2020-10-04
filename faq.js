@@ -15,7 +15,7 @@ export const faqpage =({navigation}) => {
   
 <SafeAreaView style={styles.container}>
             <ScrollView style={styles.scrollView}>
-
+<Text>Hello World</Text>
             
           </ScrollView>
         </SafeAreaView>
