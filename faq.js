@@ -3,7 +3,10 @@ import {  Switch, StyleSheet, SafeAreaView, ScrollView,  } from 'react-native';
 import { Left, Right, Separator, Container, View } from 'native-base';
 import { Avatar, Button, Text, List } from '@ui-kitten/components';
 import { Header } from '@react-navigation/stack';
-import { Divider, Caption, Rubik, Card, Subtitle, Image, Row } from '@shoutem/ui';
+import { Card, CardTitle, CardContent, CardAction, CardButton, CardImage } from 'react-native-cards'; 
+import { render } from 'react-dom';
+
+
 
 export const faqpage =({navigation}) => {
 
@@ -12,44 +15,53 @@ export const faqpage =({navigation}) => {
 <SafeAreaView style={styles.container}>
             <ScrollView style={styles.scrollView}>
 
+            <Card>
+    <CardTitle
+      title="What is ISeek?"
+    />
+    <CardContent text="ISeek is an app to help the visually imparied with finding object and reading text" />
+    <CardAction 
+      separator={true} 
+      inColumn={false}>
+    </CardAction>
+    <CardTitle
+      title="Who Created ISeek"
+    />
+    <CardContent text="The Creators are Nik, Joe, Sam, and Luke" />
+  <CardAction 
+      separator={true} 
+      inColumn={false}>
+    </CardAction>
+    <CardTitle
+      title="Contact for Help?"
+    />
+    <CardContent text="jk1551@messiah.edu" />
+  <CardAction 
+      separator={true} 
+      inColumn={false}>
+    </CardAction>
+  <CardTitle
+      title="Current Version of the App"
+    />
+    <CardContent text="Version 3"/>
+    <CardAction 
+      separator={true} 
+      inColumn={false}>
+    </CardAction>
+    <CardTitle
+      title="Final Publish Date"
+    />
+    <CardContent text="May 2021" />
+  <CardAction 
+      separator={true} 
+      inColumn={false}>
+    </CardAction>
+            
 
-
-            <Row>
-              <View styleName="vertical">
-              <View styleName="horizontal space-between">
-                <Subtitle>FAQ 1</Subtitle>
-                <Caption>iSeek was founded in 2020!</Caption>
-              </View>
-                <Text styleName="multiline"></Text>
-              </View>
-            </Row>
-
-            <Row>
-              <View styleName="vertical">
-              <View styleName="horizontal space-between">
-                <Subtitle>FAQ 2</Subtitle>
-                <Caption>To find objects in the room use the first button</Caption>
-              </View>
-                <Text styleName="multiline"></Text>
-              </View>
-            </Row>
-
-            <Row>
-              <View styleName="vertical">
-              <View styleName="horizontal space-between">
-                <Subtitle>FAQ 3</Subtitle>
-                <Caption>To read text, use the second button</Caption>
-              </View>
-                <Text styleName="multiline"></Text>
-              </View>
-            </Row>
-
-
-       
-
+            </Card>
           </ScrollView>
         </SafeAreaView>
-
+  
 );
       
     }
@@ -95,5 +107,4 @@ export const faqpage =({navigation}) => {
         alignContent: "center",
       },
     });
-
-
+  

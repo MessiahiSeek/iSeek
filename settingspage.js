@@ -1,31 +1,35 @@
 import React, { useState, useEffect, Component  } from 'react';
-import { Text, View, StyleSheet  } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, Switch  } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons'
 import { Left, Right, Separator } from 'native-base';
-import { Row, Icon, Divider, Caption, Rubik, Switch, switchOn, Button } from '@shoutem/ui';
+import { Row, Divider, Caption, Rubik, switchOn, Button } from '@shoutem/ui';
 
 
 export const settingspage =({navigation}) => {
 
+  const [isSwitchEnabled, setSwitch] = React.useState(false)
+
   return (
-    <View>
-        <View 
-          style={{
-            flex: 1,
-            backgroundColor: 'transparent',
-            flexDirection: 'row',
-          }}>
-        </View>
-
-        <Row styleName="small">
-          <Text>About</Text>
-          
-          <Button styleName="primary">
-  <Icon name="add-event" />
-  <Text>ADD TO CALENDAR</Text>
-</Button>
-
-        </Row>
-
+    <View style={styles.container}>
+      <Text>Light / Dark</Text>
+      <Switch
+        value={true}
+        onValueChange={(value) => setSwitch(value)}
+      />
     </View>
   );
 }
+
+
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#0e68b3',
+  },
+  text: {
+    fontSize: 20,
+    padding: 25,
+    alignContent: "center"
+  }
+});

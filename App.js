@@ -17,7 +17,7 @@ const App = () => {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen
-          name="iSeek"
+          name="ISeek"
           component={HomeScreen}
         />
         <Stack.Screen name="Camera" component={XCamera} options={{title:'iSeek Camera'}}/>
@@ -29,4 +29,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default App ;
