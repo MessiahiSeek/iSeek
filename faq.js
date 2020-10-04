@@ -1,7 +1,6 @@
 import React, { useState, useEffect, Component  } from 'react';
 import {  Switch, StyleSheet, SafeAreaView, ScrollView,  } from 'react-native';
 import { Left, Right, Separator, Container, View } from 'native-base';
-import { list } from 'react-native-paper';
 import { Avatar, Button, Text, List } from '@ui-kitten/components';
 import { Header } from '@react-navigation/stack';
 import { Card, CardTitle, CardContent, CardAction, CardButton, CardImage } from 'react-native-cards'; 
