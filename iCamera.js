@@ -54,6 +54,9 @@ export const XCamera =({navigation}) => {
   const [photoJson,setPhoto] = useState("");
   const [objectsInPic,SetObjectsInPhoto] = useState("");
   const [isPictureFetching, setIsPictureFetching] = useState(false);
+  const [picStr,setPicStr] = useState("");
+  const [textInPic,setTextinPic] = useState("");
+  const [Load,SetLoad] = useState(false);
 
 
 
@@ -72,10 +75,7 @@ export const XCamera =({navigation}) => {
         exif: true};
         await this.camera.takePictureAsync(options).then(photo => {
            photo.exif.Orientation = 1;            
-           //console.log(photo.base64); 
-           //getTime();  
-           //MediaLibrary.saveToLibraryAsync(photo.uri); 
-
+            setPicStr(photo.base64);
            fetch('http://ec2-3-23-33-73.us-east-2.compute.amazonaws.com:5000/image',
            {
              method: 'POST',
@@ -90,7 +90,7 @@ export const XCamera =({navigation}) => {
            .then((json) => {
              setPhoto(json.pictureResponse);
              SetObjectsInPhoto(json.objects);
-             console.log(photoJson);
+             //console.log(photoJson);
              //console.log("hello world")npm
              setIsPictureFetching(false);
             })
@@ -202,25 +202,63 @@ const handleOnPressOut = () => {
     }
   }
   }
+  findText = async () => {
+    SetLoad(true);
+     fetch('http://ec2-3-23-33-73.us-east-2.compute.amazonaws.com:5000/text',
+           {
+             method: 'POST',
+             headers:{
+               Accept: 'application/json',
+               'Content-Type': 'application/json',
+             },
+             body: JSON.stringify({
+               pictureString: picStr,
+             }),
+           }).then((response) => response.json())
+           .then((json) => {
+            console.log(json.imageText);
+             setTextinPic(json.imageText);
+             SetLoad(false);
+
+
+           if (textInPic === null){
+            Speech.speak("There is no  text in this picture.");
+           }
+           else{
+           Speech.speak("The text in this picture is ");
+           Speech.speak(json.imageText);
+           }
+          }
+           )
+           
+  }
   return (
     
     <View style={styles.container}>
         {(photoJson != "" && !isPictureFetching)  && (
           <ImageBackground source ={{ uri:`data:image/jpg;base64,${photoJson}`}} style={{flex:1, height: undefined, width: undefined}}>
+            {(Load) && (<ActivityIndicator alignContent="center" size="large" color="#000" 
+            style={{position:"absolute"}}> </ActivityIndicator>)}
           <View style={styles.close}>
           <Button title="Save Picture" style={{position:"absolute", backgroundColor:'#F50303',borderRadius:10,borderWidth: 1,borderColor: '#fff'}} onPress={async () => this.SavePicture()}> Save Picture</Button>
           </View>
           <ActionButton style={styles.close2} buttonColor="rgba(231,76,60,1)">
-          <ActionButton.Item buttonColor='#f0fff1' title="Read Objects out loud" onPress={() => console.log("notes tapped!")}>
+          <ActionButton.Item buttonColor='#f0fff1' title="Read Objects out loud" onPress={()=>this.ListObjects()}>
             <Icon name="ios-text"   onPress={()=>this.ListObjects()}/>
+          </ActionButton.Item>
+          <ActionButton.Item buttonColor='#5f6702' title="Find text in screen"onPress={()=>this.findText()} >
+            <Icon name="ios-book" onPress={()=>this.findText()}/>
           </ActionButton.Item>
           </ActionButton>
           
           </ImageBackground>
           )}
 
-      {(isPictureFetching)&&<View style={[styles.container_nik,styles.horizontal]}
-      ><ActivityIndicator alignContent="center" size="large" color="#000"></ActivityIndicator>
+
+          
+
+      {(isPictureFetching)&&<View style={[styles.container_nik,styles.horizontal]}>
+        <ActivityIndicator alignContent="center" size="large" color="#000"></ActivityIndicator>
       </View>}
 
 
