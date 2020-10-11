@@ -83,7 +83,7 @@ export const HomeScreen =({navigation}) => {
           onPress={()=>navigation.navigate('Faq')}>
             <BlurView intensity={50} style={[StyleSheet.absoluteFill, styles.nonBlurredContent, styles.blur]}></BlurView> 
               <Icon name="md-help" size="50x" color="#fff" style={styles.actionButtonIcon} />
-              <Text style={styles.text}>What?</Text>
+              <Text style={styles.text}>Question?</Text>
             </Button>
 
             <Button
