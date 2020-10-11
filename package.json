@@ -19,7 +19,7 @@
     "expo": "^38.0.10",
     "expo-av": "~8.2.1",
     "expo-camera": "^8.3.1",
-    "expo-cli": "^3.27.12",
+    "expo-cli": "^3.27.14",
     "expo-file-system": "~9.0.1",
     "expo-font": "~8.2.1",
     "expo-media-library": "~8.2.1",
