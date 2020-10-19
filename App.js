@@ -8,6 +8,7 @@ import { HomeScreen } from './Home.js';
 import { XCamera } from './iCamera.js';
 import { settingspage } from './settingspage.js';
 import { faqpage } from './faq.js';
+import { message } from './message.js';
 
 const Stack = createStackNavigator();
 
@@ -23,6 +24,7 @@ const App = () => {
         <Stack.Screen name="Camera" component={XCamera} options={{title:'iSeek Camera'}}/>
         <Stack.Screen name="Settings" component={settingspage} options={{title:'Settings'}}/>
         <Stack.Screen name="Faq" component={faqpage} options={{title:'FAQ'}}/>
+        <Stack.Screen name="Message" component={message} options={{title: 'Message'}}/>
       </Stack.Navigator>
     </NavigationContainer>
     </ApplicationProvider>

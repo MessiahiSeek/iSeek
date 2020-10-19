@@ -142,7 +142,7 @@ const getTranscription = async () => {
   setIsFetching(true);
   try {
       const info = await FileSystem.getInfoAsync(recording.getURI());
-      console.log(`FILE INFO: ${JSON.stringify(info)}`);
+      // console.log(`FILE INFO: ${JSON.stringify(info)}`);
       const uri = info.uri;
       var formData = new FormData();
       formData = {
