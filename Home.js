@@ -64,7 +64,7 @@ export const HomeScreen =({navigation}) => {
 
             <Button
             style={styles.button}
-            onPress={()=>navigation.navigate('Settings')}>
+            onPress={()=>navigation.navigate('Message')}>
               <BlurView intensity={50} style={[StyleSheet.absoluteFill, styles.nonBlurredContent, styles.blur]}></BlurView>  
               <Icon name="md-chatbubbles" size="50x" color="#fff" style={styles.actionButtonIcon} />
               <Text style={styles.text}>Messages</Text>
