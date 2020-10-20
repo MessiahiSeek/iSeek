@@ -142,20 +142,21 @@ const getTranscription = async () => {
   setIsFetching(true);
   try {
       const info = await FileSystem.getInfoAsync(recording.getURI());
-      console.log(`FILE INFO: ${JSON.stringify(info)}`);
+      // console.log(`FILE INFO: ${JSON.stringify(info)}`);
       const uri = info.uri;
-      const formData = new FormData();
-      formData.append('file', {
-          uri,
-          type: 'audio/x-wav',
-          name: 'speech2text'
-      });
+      var formData = new FormData();
+      formData = {
+        file: uri,
+        type: 'audio/x-wav',
+        name: 'speech2text'
+      };
+      console.log(formData);
       const response = await fetch('http://ec2-3-23-33-73.us-east-2.compute.amazonaws.com:5000/recording', {
           method: 'POST',
           body: formData
       });
       const data = await response.json();
-      Speech.speak(data);
+      // Speech.speak(data);
       console.log(data);
       setQuery(data.transcript);
   } catch(error) {
