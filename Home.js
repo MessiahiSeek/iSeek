@@ -3,6 +3,7 @@ import { Entypo } from '@expo/vector-icons';
 import { SafeAreaView, ScrollView, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import { BlurView } from 'expo-blur';
 import Icon from 'react-native-vector-icons/Ionicons'
+import { useTheme } from '@react-navigation/native';
 import { Container, Header, Content, View, Alert, Text, Footer, FooterTab, Fab, Left, Body, Right, Title, Tab, Tabs, Styles } from 'native-base';
 import {  Button, ButtonGroup, Layout, Spinner, Divider, Caption, Rubik, Tile, Image, Subtitle, ImageBackground, Overlay } from '@shoutem/ui';
 import { XCamera } from './iCamera.js';
@@ -12,6 +13,8 @@ import { color } from 'react-native-reanimated';
 
 
 export const HomeScreen =({navigation}) => {
+
+  const {colors} = useTheme();
       
         return (
         
