@@ -13,17 +13,16 @@ export const settingspage =({navigation}) => {
 
   const {colors} = useTheme();
 
-  const [darkMode,setDarkMode]=useState(false)
-
-
+  const [darkMode,setDarkMode]=useState(false);
 
   return (
 
     <View style={styles.container}>
       <Text style={styles.item}> Dark Mode</Text>
-      <Switch value={darkMode} onValueChange={(value)=>{
+      <Switch value={darkMode} 
+      onValueChange={(value)=>{
       setDarkMode(value);
-      EventRegister.emit('changeThemeEvent' , value);
+      EventRegister.emit('changeThemeEvent', value);
       }}/>
     </View>
   );

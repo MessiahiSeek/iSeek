@@ -23,24 +23,24 @@ const MyTheme = {
 
 const App = () => {
 
-  const [darkApp,setDarkApp]=useState(false);
-  const appTheme = darkApp ? DefaultTheme : DarkTheme;
+  const [darkApp, setDarkApp] = useState(false);
+  const appTheme = darkApp ? DarkTheme : DefaultTheme;
 
   useEffect(() => {
     let eventListener = EventRegister.addEventListener(
       'changeThemeEvent',
       data => {
-        alert(data);
+        setDarkApp(data);
       },
     );
-    return() => {
+    return () => {
       EventRegister.removeEventListener(eventListener);
     };
 }, []);
 
   return (
     <ApplicationProvider {...eva} theme={eva.light}>
-    <NavigationContainer theme={MyTheme}>
+    <NavigationContainer theme={appTheme}>
       <Stack.Navigator>
         <Stack.Screen
           name="ISeek"
