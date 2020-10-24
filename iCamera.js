@@ -18,10 +18,6 @@ YellowBox.ignoreWarnings([
   'Animated: `useNativeDriver` was not specified. This is a required option and must be explicitly set to `true` or `false`',
 ])
 
-
-
-
-
 const recordingOptions = {
   // android not currently in use, but parameters are required
   android: {
@@ -83,10 +79,10 @@ export const XCamera =({navigation}) => {
   snap = async () => {
     if (this.camera) {
       setIsPictureFetching(true);
-      const options = { quality: 1, base64: true, fixOrientation: true, 
+      const options = { quality: .0000001, base64: true, fixOrientation: true, 
         exif: true};
-        await this.camera.takePictureAsync(options).then(photo => {
-           photo.exif.Orientation = 1;            
+        await this.camera.takePictureAsync({quality: .1, base64: true}).then(photo => {
+           //photo.exif.Orientation = 1;            
             setPicStr(photo.base64);
            fetch('http://ec2-3-23-33-73.us-east-2.compute.amazonaws.com:5000/image',
            {
@@ -154,9 +150,7 @@ const getTranscription = async () => {
   setIsFetching(true);
   try {
       const info = await FileSystem.getInfoAsync(recording.getURI());
-      // console.log(`FILE INFO: ${JSON.stringify(info)}`);
       const fileUri = info.uri;
-      
       var file = {
         uri: fileUri,
         type: 'audio/x-wav',
@@ -170,9 +164,7 @@ const getTranscription = async () => {
           body: body
       });
       const data = await response.json();
-      // Speech.speak(data);
-      console.log(data);
-      //setQuery(data.transcript);
+      Speech.speak("You said " + data.voiceResponse);
   } catch(error) {
       console.log('There was an error reading file', error);
       stopRecording();
