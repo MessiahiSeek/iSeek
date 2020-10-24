@@ -12,6 +12,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import ActionButton from 'react-native-action-button';
 import { Left } from 'native-base';
 import { YellowBox } from 'react-native'
+import * as ImagePicker from 'expo-image-picker';
 
 YellowBox.ignoreWarnings([
   'Animated: `useNativeDriver` was not specified. This is a required option and must be explicitly set to `true` or `false`',
@@ -64,6 +65,17 @@ export const XCamera =({navigation}) => {
     (async () => {
       const { status } = await Camera.requestPermissionsAsync();
       setHasPermission(status === 'granted');
+    })();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      if (Platform.OS !== 'web') {
+        const { status } = await ImagePicker.requestCameraRollPermissionsAsync();
+        if (status !== 'granted') {
+          alert('Sorry, we need camera roll permissions to make this work!');
+        }
+      }
     })();
   }, []);
 
@@ -143,22 +155,24 @@ const getTranscription = async () => {
   try {
       const info = await FileSystem.getInfoAsync(recording.getURI());
       // console.log(`FILE INFO: ${JSON.stringify(info)}`);
-      const uri = info.uri;
-      var formData = new FormData();
-      formData = {
-        file: uri,
+      const fileUri = info.uri;
+      
+      var file = {
+        uri: fileUri,
         type: 'audio/x-wav',
-        name: 'speech2text'
-      };
-      console.log(formData);
+        name: 'audio.wav'
+      }
+      var body = new FormData();
+      body.append('file',file);
+      
       const response = await fetch('http://ec2-3-23-33-73.us-east-2.compute.amazonaws.com:5000/recording', {
           method: 'POST',
-          body: formData
+          body: body
       });
       const data = await response.json();
       // Speech.speak(data);
       console.log(data);
-      setQuery(data.transcript);
+      //setQuery(data.transcript);
   } catch(error) {
       console.log('There was an error reading file', error);
       stopRecording();
@@ -233,6 +247,37 @@ const handleOnPressOut = () => {
            )
            
   }
+  getCameraPic = async () =>{
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+      base64: true,
+    });
+
+
+    if (!result.cancelled) {
+      setIsPictureFetching(true);
+      fetch('http://ec2-3-23-33-73.us-east-2.compute.amazonaws.com:5000/image',
+      //fetch('153.42.129.91:5000/image',
+           {
+             method: 'POST',
+             headers:{
+               Accept: 'application/json',
+               'Content-Type': 'application/json',
+             },
+             body: JSON.stringify({
+               pictureString: result.base64,
+             }),
+           }).then((response) => response.json())
+           .then((json) => {
+             setPhoto(json.pictureResponse);
+             SetObjectsInPhoto(json.objects);
+             setIsPictureFetching(false);
+            })
+    }
+  }
   return (
     
     <View style={styles.container}>
@@ -280,6 +325,7 @@ const handleOnPressOut = () => {
                     {isFetching && <ActivityIndicator/>}
                     {!isFetching && <Text>Voice Search</Text>}
                 </Button>
+                <Button  onPress = {() =>  this.getCameraPic()}> Camera Roll</Button>
                 </ButtonGroup>
                 </View>
                 </Camera>
