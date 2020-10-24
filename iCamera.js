@@ -79,9 +79,9 @@ export const XCamera =({navigation}) => {
   snap = async () => {
     if (this.camera) {
       setIsPictureFetching(true);
-      const options = { quality: .0000001, base64: true, fixOrientation: true, 
+      const options = { quality: .1, base64: true, fixOrientation: true, 
         exif: true};
-        await this.camera.takePictureAsync({quality: .1, base64: true}).then(photo => {
+        await this.camera.takePictureAsync(options).then(photo => {
            //photo.exif.Orientation = 1;            
             setPicStr(photo.base64);
            fetch('http://ec2-3-23-33-73.us-east-2.compute.amazonaws.com:5000/image',
