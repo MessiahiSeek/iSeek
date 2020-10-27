@@ -13,6 +13,8 @@ import ActionButton from 'react-native-action-button';
 import { Left } from 'native-base';
 import { YellowBox } from 'react-native'
 import * as ImagePicker from 'expo-image-picker';
+import { Video } from 'expo-av';
+
 
 YellowBox.ignoreWarnings([
   'Animated: `useNativeDriver` was not specified. This is a required option and must be explicitly set to `true` or `false`',
@@ -54,7 +56,7 @@ export const XCamera =({navigation}) => {
   const [picStr,setPicStr] = useState("");
   const [textInPic,setTextinPic] = useState("");
   const [Load,SetLoad] = useState(false);
-
+  const [vid,setVid] = useState(null);
 
 
   useEffect(() => {
@@ -98,8 +100,6 @@ export const XCamera =({navigation}) => {
            .then((json) => {
              setPhoto(json.pictureResponse);
              SetObjectsInPhoto(json.objects);
-             //console.log(photoJson);
-             //console.log("hello world")npm
              setIsPictureFetching(false);
             })
          });
@@ -242,8 +242,7 @@ const handleOnPressOut = () => {
   getCameraPic = async () =>{
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
-      //allowsEditing: true,
-      //aspect: [4, 3],
+      
       quality: 1,
       base64: true,
     });
@@ -270,13 +269,48 @@ const handleOnPressOut = () => {
             })
     }
   }
+  starVideo = async () =>
+  {
+      console.log("world")
+      
+      const options = { quality: Camera.Constants.VideoQuality[2160], mute:true}
+      const video = await this.camera.recordAsync(options);
+      setIsPictureFetching(true);
+
+      MediaLibrary.saveToLibraryAsync(video.uri);
+      const fileUri = video.uri;
+      var file = {
+        uri: fileUri,
+        name: 'video.mov'
+      }
+      var body = new FormData();
+      body.append('file',file);
+      fetch('http://ec2-3-23-33-73.us-east-2.compute.amazonaws.com:5000/video', {
+          method: 'POST',
+          body: body
+      }).then((response) => response.json())
+      .then((json) => {
+        setVid(json.vidResponse);
+        setIsPictureFetching(false);
+       })
+  } 
+
+  stopVideo = async () =>
+  {
+      this.camera.stopRecording();
+  }
+ 
   return (
     
     <View style={styles.container}>
-        {(photoJson != "" && !isPictureFetching)  && (
-          <ImageBackground source ={{ uri:`data:image/jpg;base64,${photoJson}`}} style={{flex:1, height: undefined, width: undefined}}>
+        {(photoJson != "" && vid == null && !isPictureFetching)  && (
+           
+           <ImageBackground source ={{ uri:`data:image/jpg;base64,${photoJson}`}} style={{flex:1, height: undefined, width: undefined}}>
+            
             {(Load) && (<ActivityIndicator alignContent="center" size="large" color="#000" 
+
             style={{position:"absolute"}}> </ActivityIndicator>)}
+
           <View style={styles.close}>
           <Button title="Save Picture" style={{position:"absolute", backgroundColor:'#F50303',borderRadius:10,borderWidth: 1,borderColor: '#fff'}} onPress={async () => this.SavePicture()}> Save Picture</Button>
           </View>
@@ -290,8 +324,39 @@ const handleOnPressOut = () => {
           </ActionButton>
           
           </ImageBackground>
-          )}
+        )}
 
+        {(photoJson == "" && vid != null && !isPictureFetching)  && (
+           <>
+         
+           <Video
+           source={{ vid }}
+           rate={1.0}
+           volume={1.0}
+           isMuted={false}
+           resizeMode="cover"
+           shouldPlay
+           isLooping
+           //style={{ width: 300, height: 300 }}
+         />
+
+            {(Load) && (
+            <ActivityIndicator alignContent="center" size="large" color="#000" 
+            style={{position:"absolute"}}> </ActivityIndicator>)}
+
+          <View style={styles.close}>
+          <Button title="Save Picture" style={{position:"absolute", backgroundColor:'#F50303',borderRadius:10,borderWidth: 1,borderColor: '#fff'}} onPress={async () => this.SavePicture()}> Save Picture</Button>
+          </View>
+          <ActionButton style={styles.close2} buttonColor="rgba(231,76,60,1)">
+          <ActionButton.Item buttonColor='#f0fff1' title="Read Objects out loud" onPress={()=>this.ListObjects()}>
+            <Icon name="ios-text"   onPress={()=>this.ListObjects()}/>
+          </ActionButton.Item>
+          <ActionButton.Item buttonColor='#5f6702' title="Find text in screen"onPress={()=>this.findText()} >
+            <Icon name="ios-book" onPress={()=>this.findText()}/>
+          </ActionButton.Item>
+          </ActionButton>
+          </>
+        )}
 
           
 
@@ -319,6 +384,8 @@ const handleOnPressOut = () => {
                 </Button>
                 <Button  onPress = {() =>  this.getCameraPic()}> Camera Roll</Button>
                 </ButtonGroup>
+                <Button  style={{position:"absolute", backgroundColor:'#F50303',borderRadius:10,borderWidth: 1,borderColor: '#fff'}} onPressIn={starVideo}
+                onPressOut = {stopVideo}>Record</Button>
                 </View>
                 </Camera>
       ) }
