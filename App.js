@@ -37,15 +37,15 @@ const App = () => {
       EventRegister.removeEventListener(eventListener);
     };
 }, []);
-
+/*
+<Stack.Screen
+          name="ISeek"
+          component={HomeScreen}
+        />*/
   return (
     <ApplicationProvider {...eva} theme={eva.light}>
     <NavigationContainer theme={appTheme}>
       <Stack.Navigator>
-        <Stack.Screen
-          name="ISeek"
-          component={HomeScreen}
-        />
         <Stack.Screen name="Camera" component={XCamera} options={{title:'iSeek Camera'}}/>
         <Stack.Screen name="Settings" component={settingspage} options={{title:'Settings'}}/>
         <Stack.Screen name="Faq" component={faqpage} options={{title:'FAQ'}}/>

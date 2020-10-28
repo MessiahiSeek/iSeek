@@ -57,6 +57,7 @@ export const XCamera =({navigation}) => {
   const [textInPic,setTextinPic] = useState("");
   const [Load,SetLoad] = useState(false);
   const [vid,setVid] = useState(null);
+  const [checkVid,checksetVid] = useState(null);
 
 
   useEffect(() => {
@@ -365,29 +366,35 @@ const handleOnPressOut = () => {
       </View>}
 
 
-      {(photoJson == "" && !isPictureFetching) &&(
+      {(photoJson == "" && !isPictureFetching && vid == null) &&(
+        <>
         <Camera style={{ flex: 1 }} type={type} ref={ref => { this.camera = ref; }}>
-        <View>
-          <ButtonGroup style={styles.buttongroup} size='large'>
-        <Button onPress={ async () =>  this.snap()}> Camera</Button>
-          <Button onPress={() => {
-              setType(
-                type === Camera.Constants.Type.back
-                  ? Camera.Constants.Type.front
-                  : Camera.Constants.Type.back
-              );
-            }}>Flip</Button>
-        
+      </Camera>
+      { !checkVid ? 
+         <Button onPress={ async () =>  this.snap()}> Camera</Button> 
+         : <Button onPressIn={starVideo} onPressOut = {stopVideo}> Video</Button> } 
         <Button onPressIn={handleOnPressIn}    onPressOut={handleOnPressOut}>
                     {isFetching && <ActivityIndicator/>}
                     {!isFetching && <Text>Voice Search</Text>}
                 </Button>
-                <Button  onPress = {() =>  this.getCameraPic()}> Camera Roll</Button>
-                </ButtonGroup>
-                <Button  style={{position:"absolute", backgroundColor:'#F50303',borderRadius:10,borderWidth: 1,borderColor: '#fff'}} onPressIn={starVideo}
-                onPressOut = {stopVideo}>Record</Button>
-                </View>
-                </Camera>
+
+        <ActionButton style={styles.close2} buttonColor="rgba(23,176,60,.71)">  
+          <ActionButton.Item title="Switch Camera" buttonColor='#5d2124' onPress={() => {setType(type === Camera.Constants.Type.back? Camera.Constants.Type.front: Camera.Constants.Type.back);}}>
+            <Icon name="ios-refresh"/>
+          </ActionButton.Item>
+                <ActionButton.Item title="Camera Roll" buttonColor='#1d4691' onPress = {() =>  this.getCameraPic()}> 
+                <Icon name="ios-book"/>
+                </ActionButton.Item>
+                {/*</ButtonGroup>*/}
+                {checkVid ? <ActionButton.Item buttonColor='#5d27f2' title="switch to camera" onPress={() => checksetVid(!checkVid)}  >
+                  <Icon name="ios-videocam"/>
+            </ActionButton.Item> :
+            <ActionButton.Item buttonColor='#5d27f2' title="switch to video" onPress={() => checksetVid(!checkVid)}  >
+            <Icon name="ios-videocam"/>
+      </ActionButton.Item>}
+
+          </ActionButton>
+        </>  
       ) }
         
     </View>
@@ -427,12 +434,14 @@ const styles = StyleSheet.create({
   },
   close2: {
     position: 'absolute',
-    width: '100%', 
-    padding: 30,
-    justifyContent: 'center', 
-    alignItems: 'flex-start',
-   bottom: 20,
-   marginRight:'5%',
+    bottom:'15%',
+    //width: '100%', 
+    //padding: 30,
+    //justifyContent: 'center', 
+    //alignItems: 'flex-start',
+    //top: '195%',
+    alignSelf:'flex-end'
+   //marginRight:'5%',
 
   },
   buttongroup: {
