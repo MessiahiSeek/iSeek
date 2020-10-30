@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Component  } from 'react';
-import { Text, View, TouchableOpacity, ref, StyleSheet, ActivityIndicator,Image, ImageBackground  } from 'react-native';
+import { Text, View, TouchableOpacity, ref, StyleSheet, ActivityIndicator, Image, ImageBackground  } from 'react-native';
 import {  Button, ButtonGroup,/* Icon*/ Layout, Spinner } from '@ui-kitten/components';
 import { Camera } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
@@ -14,6 +14,8 @@ import { Left } from 'native-base';
 import { YellowBox } from 'react-native'
 import * as ImagePicker from 'expo-image-picker';
 import { Video } from 'expo-av';
+import { settingspage } from './settingspage.js';
+import { message } from './message.js';
 
 
 YellowBox.ignoreWarnings([
@@ -311,7 +313,6 @@ const handleOnPressOut = () => {
             {(Load) && (<ActivityIndicator alignContent="center" size="large" color="#000" 
 
             style={{position:"absolute"}}> </ActivityIndicator>)}
-
           <View style={styles.close}>
           <Button title="Save Picture" style={{position:"absolute", backgroundColor:'#F50303',borderRadius:10,borderWidth: 1,borderColor: '#fff'}} onPress={async () => this.SavePicture()}> Save Picture</Button>
           </View>
@@ -370,28 +371,46 @@ const handleOnPressOut = () => {
         <>
         <Camera style={{ flex: 1 }} type={type} ref={ref => { this.camera = ref; }}>
       </Camera>
-      { !checkVid ? 
-         <Button onPress={ async () =>  this.snap()}> Camera</Button> 
-         : <Button onPressIn={starVideo} onPressOut = {stopVideo}> Video</Button> } 
-        <Button onPressIn={handleOnPressIn}    onPressOut={handleOnPressOut}>
-                    {isFetching && <ActivityIndicator/>}
-                    {!isFetching && <Text>Voice Search</Text>}
-                </Button>
+      {!checkVid ? 
+      <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'9%',left:'45%'}} onPress={ async () =>  this.snap()}>
+         <Image source={require("./images/cam.png")} style={{ width: 55, height: 55 , borderRadius:100}} onPress={ async () =>  this.snap()}/>
+      </TouchableOpacity>
+         : 
+         <TouchableOpacity style = {{position: 'absolute', borderRadius:"100%",bottom:'9%',left:'45%'}} onPressIn={starVideo} onPressOut = {stopVideo}>
+         <Image source={require("./images/vid.jpeg")} style={{ width: 55, height: 55 ,  borderRadius:"100%"}} />
+      </TouchableOpacity>  
+      }
+
+      <TouchableOpacity style = {{position: 'absolute', borderRadius:"100%",bottom:'9%',left:'10%'}} onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}> 
+    {isFetching ?  <ActivityIndicator color="#0f0"></ActivityIndicator> :
+         <Image source={require("./images/chat.png")} style={{ width: 55, height: 55 ,  borderRadius:"100%"}} />}
+      </TouchableOpacity> 
+
 
         <ActionButton style={styles.close2} buttonColor="rgba(23,176,60,.71)">  
+        <ActionButton.Item title="Settings page" buttonColor='#1ff691' onPress={()=>navigation.navigate('Settings')}> 
+                <Icon name="ios-settings"/>
+        </ActionButton.Item>
+        <ActionButton.Item title="Messaging page" buttonColor='#1ffff1' onPress={()=>navigation.navigate('Message')}> 
+                <Icon name="ios-chatbubble-ellipses-sharp"/>
+        </ActionButton.Item>
+        
+        <ActionButton.Item title="Faq page" buttonColor='#1f2321' onPress={()=>navigation.navigate('Faq')}> 
+                <Icon name="ios-book"/>
+        </ActionButton.Item>
           <ActionButton.Item title="Switch Camera" buttonColor='#5d2124' onPress={() => {setType(type === Camera.Constants.Type.back? Camera.Constants.Type.front: Camera.Constants.Type.back);}}>
             <Icon name="ios-refresh"/>
           </ActionButton.Item>
                 <ActionButton.Item title="Camera Roll" buttonColor='#1d4691' onPress = {() =>  this.getCameraPic()}> 
-                <Icon name="ios-book"/>
+                <Icon name="ios-browsers"/>
                 </ActionButton.Item>
-                {/*</ButtonGroup>*/}
                 {checkVid ? <ActionButton.Item buttonColor='#5d27f2' title="switch to camera" onPress={() => checksetVid(!checkVid)}  >
                   <Icon name="ios-videocam"/>
             </ActionButton.Item> :
             <ActionButton.Item buttonColor='#5d27f2' title="switch to video" onPress={() => checksetVid(!checkVid)}  >
             <Icon name="ios-videocam"/>
       </ActionButton.Item>}
+      
 
           </ActionButton>
         </>  
@@ -434,7 +453,7 @@ const styles = StyleSheet.create({
   },
   close2: {
     position: 'absolute',
-    bottom:'15%',
+    bottom:'5%',
     //width: '100%', 
     //padding: 30,
     //justifyContent: 'center', 
