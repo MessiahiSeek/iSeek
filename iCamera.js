@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Component  } from 'react';
-import { Text, View, TouchableOpacity, ref, StyleSheet, ActivityIndicator,Image, ImageBackground  } from 'react-native';
+import { Text, View, TouchableOpacity, ref, StyleSheet, ActivityIndicator, Image, ImageBackground  } from 'react-native';
 import {  Button, ButtonGroup,/* Icon*/ Layout, Spinner } from '@ui-kitten/components';
 import { Camera } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
@@ -12,14 +12,15 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import ActionButton from 'react-native-action-button';
 import { Left } from 'native-base';
 import { YellowBox } from 'react-native'
+import * as ImagePicker from 'expo-image-picker';
+import { Video } from 'expo-av';
+import { settingspage } from './settingspage.js';
+import { message } from './message.js';
+
 
 YellowBox.ignoreWarnings([
   'Animated: `useNativeDriver` was not specified. This is a required option and must be explicitly set to `true` or `false`',
 ])
-
-
-
-
 
 const recordingOptions = {
   // android not currently in use, but parameters are required
@@ -57,7 +58,8 @@ export const XCamera =({navigation}) => {
   const [picStr,setPicStr] = useState("");
   const [textInPic,setTextinPic] = useState("");
   const [Load,SetLoad] = useState(false);
-
+  const [vid,setVid] = useState(null);
+  const [checkVid,checksetVid] = useState(null);
 
 
   useEffect(() => {
@@ -67,14 +69,25 @@ export const XCamera =({navigation}) => {
     })();
   }, []);
 
+  useEffect(() => {
+    (async () => {
+      if (Platform.OS !== 'web') {
+        const { status } = await ImagePicker.requestCameraRollPermissionsAsync();
+        if (status !== 'granted') {
+          alert('Sorry, we need camera roll permissions to make this work!');
+        }
+      }
+    })();
+  }, []);
+
 
   snap = async () => {
     if (this.camera) {
       setIsPictureFetching(true);
-      const options = { quality: 1, base64: true, fixOrientation: true, 
+      const options = { quality: .1, base64: true, fixOrientation: true, 
         exif: true};
         await this.camera.takePictureAsync(options).then(photo => {
-           photo.exif.Orientation = 1;            
+           //photo.exif.Orientation = 1;            
             setPicStr(photo.base64);
            fetch('http://ec2-3-23-33-73.us-east-2.compute.amazonaws.com:5000/image',
            {
@@ -90,8 +103,6 @@ export const XCamera =({navigation}) => {
            .then((json) => {
              setPhoto(json.pictureResponse);
              SetObjectsInPhoto(json.objects);
-             //console.log(photoJson);
-             //console.log("hello world")npm
              setIsPictureFetching(false);
             })
          });
@@ -142,23 +153,21 @@ const getTranscription = async () => {
   setIsFetching(true);
   try {
       const info = await FileSystem.getInfoAsync(recording.getURI());
-      // console.log(`FILE INFO: ${JSON.stringify(info)}`);
-      const uri = info.uri;
-      var formData = new FormData();
-      formData = {
-        file: uri,
+      const fileUri = info.uri;
+      var file = {
+        uri: fileUri,
         type: 'audio/x-wav',
-        name: 'speech2text'
-      };
-      console.log(formData);
+        name: 'audio.wav'
+      }
+      var body = new FormData();
+      body.append('file',file);
+      
       const response = await fetch('http://ec2-3-23-33-73.us-east-2.compute.amazonaws.com:5000/recording', {
           method: 'POST',
-          body: formData
+          body: body
       });
       const data = await response.json();
-      // Speech.speak(data);
-      console.log(data);
-      setQuery(data.transcript);
+      Speech.speak("You said " + data.voiceResponse);
   } catch(error) {
       console.log('There was an error reading file', error);
       stopRecording();
@@ -233,12 +242,76 @@ const handleOnPressOut = () => {
            )
            
   }
+  getCameraPic = async () =>{
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      
+      quality: 1,
+      base64: true,
+    });
+
+
+    if (!result.cancelled) {
+      setIsPictureFetching(true);
+      fetch('http://ec2-3-23-33-73.us-east-2.compute.amazonaws.com:5000/image',
+      //fetch('153.42.129.91:5000/image',
+           {
+             method: 'POST',
+             headers:{
+               Accept: 'application/json',
+               'Content-Type': 'application/json',
+             },
+             body: JSON.stringify({
+               pictureString: result.base64,
+             }),
+           }).then((response) => response.json())
+           .then((json) => {
+             setPhoto(json.pictureResponse);
+             SetObjectsInPhoto(json.objects);
+             setIsPictureFetching(false);
+            })
+    }
+  }
+  starVideo = async () =>
+  {
+      console.log("world")
+      
+      const options = { quality: Camera.Constants.VideoQuality[2160], mute:true}
+      const video = await this.camera.recordAsync(options);
+      setIsPictureFetching(true);
+
+      MediaLibrary.saveToLibraryAsync(video.uri);
+      const fileUri = video.uri;
+      var file = {
+        uri: fileUri,
+        name: 'video.mov'
+      }
+      var body = new FormData();
+      body.append('file',file);
+      fetch('http://ec2-3-23-33-73.us-east-2.compute.amazonaws.com:5000/video', {
+          method: 'POST',
+          body: body
+      }).then((response) => response.json())
+      .then((json) => {
+        setVid(json.vidResponse);
+        setIsPictureFetching(false);
+       })
+  } 
+
+  stopVideo = async () =>
+  {
+      this.camera.stopRecording();
+  }
+ 
   return (
     
     <View style={styles.container}>
-        {(photoJson != "" && !isPictureFetching)  && (
-          <ImageBackground source ={{ uri:`data:image/jpg;base64,${photoJson}`}} style={{flex:1, height: undefined, width: undefined}}>
+        {(photoJson != "" && vid == null && !isPictureFetching)  && (
+           
+           <ImageBackground source ={{ uri:`data:image/jpg;base64,${photoJson}`}} style={{flex:1, height: undefined, width: undefined}}>
+            
             {(Load) && (<ActivityIndicator alignContent="center" size="large" color="#000" 
+
             style={{position:"absolute"}}> </ActivityIndicator>)}
           <View style={styles.close}>
           <Button title="Save Picture" style={{position:"absolute", backgroundColor:'#F50303',borderRadius:10,borderWidth: 1,borderColor: '#fff'}} onPress={async () => this.SavePicture()}> Save Picture</Button>
@@ -253,8 +326,39 @@ const handleOnPressOut = () => {
           </ActionButton>
           
           </ImageBackground>
-          )}
+        )}
 
+        {(photoJson == "" && vid != null && !isPictureFetching)  && (
+           <>
+         
+           <Video
+           source={{ vid }}
+           rate={1.0}
+           volume={1.0}
+           isMuted={false}
+           resizeMode="cover"
+           shouldPlay
+           isLooping
+           //style={{ width: 300, height: 300 }}
+         />
+
+            {(Load) && (
+            <ActivityIndicator alignContent="center" size="large" color="#000" 
+            style={{position:"absolute"}}> </ActivityIndicator>)}
+
+          <View style={styles.close}>
+          <Button title="Save Picture" style={{position:"absolute", backgroundColor:'#F50303',borderRadius:10,borderWidth: 1,borderColor: '#fff'}} onPress={async () => this.SavePicture()}> Save Picture</Button>
+          </View>
+          <ActionButton style={styles.close2} buttonColor="rgba(231,76,60,1)">
+          <ActionButton.Item buttonColor='#f0fff1' title="Read Objects out loud" onPress={()=>this.ListObjects()}>
+            <Icon name="ios-text"   onPress={()=>this.ListObjects()}/>
+          </ActionButton.Item>
+          <ActionButton.Item buttonColor='#5f6702' title="Find text in screen"onPress={()=>this.findText()} >
+            <Icon name="ios-book" onPress={()=>this.findText()}/>
+          </ActionButton.Item>
+          </ActionButton>
+          </>
+        )}
 
           
 
@@ -263,26 +367,53 @@ const handleOnPressOut = () => {
       </View>}
 
 
-      {(photoJson == "" && !isPictureFetching) &&(
+      {(photoJson == "" && !isPictureFetching && vid == null) &&(
+        <>
         <Camera style={{ flex: 1 }} type={type} ref={ref => { this.camera = ref; }}>
-        <View>
-          <ButtonGroup style={styles.buttongroup} size='large'>
-        <Button onPress={ async () =>  this.snap()}> Camera</Button>
-          <Button onPress={() => {
-              setType(
-                type === Camera.Constants.Type.back
-                  ? Camera.Constants.Type.front
-                  : Camera.Constants.Type.back
-              );
-            }}>Flip</Button>
+      </Camera>
+      {!checkVid ? 
+      <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'9%',left:'45%'}} onPress={ async () =>  this.snap()}>
+         <Image source={require("./images/cam.png")} style={{ width: 55, height: 55 , borderRadius:100}} onPress={ async () =>  this.snap()}/>
+      </TouchableOpacity>
+         : 
+         <TouchableOpacity style = {{position: 'absolute', borderRadius:"100%",bottom:'9%',left:'45%'}} onPressIn={starVideo} onPressOut = {stopVideo}>
+         <Image source={require("./images/vid.jpeg")} style={{ width: 55, height: 55 ,  borderRadius:"100%"}} />
+      </TouchableOpacity>  
+      }
+
+      <TouchableOpacity style = {{position: 'absolute', borderRadius:"100%",bottom:'9%',left:'10%'}} onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}> 
+    {isFetching ?  <ActivityIndicator color="#0f0"></ActivityIndicator> :
+         <Image source={require("./images/chat.png")} style={{ width: 55, height: 55 ,  borderRadius:"100%"}} />}
+      </TouchableOpacity> 
+
+
+        <ActionButton style={styles.close2} buttonColor="rgba(23,176,60,.71)">  
+        <ActionButton.Item title="Settings page" buttonColor='#1ff691' onPress={()=>navigation.navigate('Settings')}> 
+                <Icon name="ios-settings"/>
+        </ActionButton.Item>
+        <ActionButton.Item title="Messaging page" buttonColor='#1ffff1' onPress={()=>navigation.navigate('Message')}> 
+                <Icon name="ios-chatbubble-ellipses-sharp"/>
+        </ActionButton.Item>
         
-        <Button onPressIn={handleOnPressIn}    onPressOut={handleOnPressOut}>
-                    {isFetching && <ActivityIndicator/>}
-                    {!isFetching && <Text>Voice Search</Text>}
-                </Button>
-                </ButtonGroup>
-                </View>
-                </Camera>
+        <ActionButton.Item title="Faq page" buttonColor='#1f2321' onPress={()=>navigation.navigate('Faq')}> 
+                <Icon name="ios-book"/>
+        </ActionButton.Item>
+          <ActionButton.Item title="Switch Camera" buttonColor='#5d2124' onPress={() => {setType(type === Camera.Constants.Type.back? Camera.Constants.Type.front: Camera.Constants.Type.back);}}>
+            <Icon name="ios-refresh"/>
+          </ActionButton.Item>
+                <ActionButton.Item title="Camera Roll" buttonColor='#1d4691' onPress = {() =>  this.getCameraPic()}> 
+                <Icon name="ios-browsers"/>
+                </ActionButton.Item>
+                {checkVid ? <ActionButton.Item buttonColor='#5d27f2' title="switch to camera" onPress={() => checksetVid(!checkVid)}  >
+                  <Icon name="ios-videocam"/>
+            </ActionButton.Item> :
+            <ActionButton.Item buttonColor='#5d27f2' title="switch to video" onPress={() => checksetVid(!checkVid)}  >
+            <Icon name="ios-videocam"/>
+      </ActionButton.Item>}
+      
+
+          </ActionButton>
+        </>  
       ) }
         
     </View>
@@ -322,12 +453,14 @@ const styles = StyleSheet.create({
   },
   close2: {
     position: 'absolute',
-    width: '100%', 
-    padding: 30,
-    justifyContent: 'center', 
-    alignItems: 'flex-start',
-   bottom: 20,
-   marginRight:'5%',
+    bottom:'5%',
+    //width: '100%', 
+    //padding: 30,
+    //justifyContent: 'center', 
+    //alignItems: 'flex-start',
+    //top: '195%',
+    alignSelf:'flex-end'
+   //marginRight:'5%',
 
   },
   buttongroup: {
