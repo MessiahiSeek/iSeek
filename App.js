@@ -34,7 +34,7 @@ function HomeScreen({navigation}) {
           alignItems: 'center',
           justifyContent: 'center',
         }}>
-          <Text>HomeScreen</Text>
+          <Text>Home Screen</Text>
           </Content>
     </Container>
   );
