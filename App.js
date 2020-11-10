@@ -1,34 +1,92 @@
 import 'react-native-gesture-handler';
 import React, { useState, useEffect, Component }  from 'react';
 import * as eva from '@eva-design/eva';
-import { ApplicationProvider, Layout, Text } from '@ui-kitten/components';
-import { NavigationContainer, DefaultTheme, DarkTheme, useTheme } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import { HomeScreen } from './Home.js';
+import { ApplicationProvider, Layout } from '@ui-kitten/components';
+import { DarkTheme, DefaultTheme, getFocusedRouteNameFromRoute, NavigationContainer, useIsFocused, useTheme } from '@react-navigation/native';
+import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem, } from '@react-navigation/drawer';
 import { XCamera } from './iCamera.js';
 import { settingspage } from './settingspage.js';
 import { faqpage } from './faq.js';
 import { message } from './message.js';
 import { EventRegister } from 'react-native-event-listeners';
+import { Animated, StyleSheet, View, TouchableWithoutFeedback, Text, Container, Body, Content, Right, Footer, Left } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
+import { Switch, List, ListItem } from '@shoutem/ui';
+import Sidebar from './customDrawer.js';
+import { PropsService } from '@ui-kitten/components/devsupport';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
 
-const Stack = createStackNavigator();
+const Drawer = createDrawerNavigator();
+function HomeScreen({navigation}) {
+  const {colors} = useTheme();
+  return (
+    <Container style={{Color: colors.card}}>
+      <Header>
+        <Left style={{flex: 0.1}} />
+        <Body style={{flex: 1, alignItems: 'center'}}>
+          <Title>Home</Title>
+        </Body>
+        <Right style={{flex: 0.1}} />
+      </Header>
+      <Content
+        contentContainerStyle={{
+          flex: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+          <Text>HomeScreen</Text>
+          </Content>
+    </Container>
+  );
+}
 
-const MyTheme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    primary: 'rgb(255, 45, 85)',
-  },
+const AppDrawer = () => {
+  return (
+    <Drawer.Navigator  drawerContent={props => <Sidebar {...props} />}>
+      
+      <Drawer.Screen
+      name="Camera"
+      component={XCamera}
+      options={{
+        drawerIcon: ({focused, color, size}) => (
+          <Icon name="ios-camera" style={{fontSize: size, color: color}} />
+        ),
+      }}
+      />
+
+      <Drawer.Screen
+      name="Messenger"
+      color = {Colors.Text}
+      component={message}
+      options={{
+        drawerIcon: ({focused, color, size}) => (
+          <Icon name="ios-chatbubbles" style={{fontSize: size, color: color}} />
+        ),
+      }}
+      />  
+
+      <Drawer.Screen
+      name="FAQ"
+      color = {Colors.Title}
+      component={faqpage}
+      options={{
+        drawerIcon: ({focused, color, size}) => (
+          <Icon name="ios-book" style={{fontSize: size, color: color}} />
+        ),
+      }}
+      />
+
+    </Drawer.Navigator>
+  );
 };
 
-const App = () => {
+function App() {
+  const [darkApp, setDarkApp]=useState(false);
+  const appTheme = darkApp ? DarkTheme : DefaultTheme; 
 
-  const [darkApp, setDarkApp] = useState(false);
-  const appTheme = darkApp ? DarkTheme : DefaultTheme;
-
-  useEffect(() => {
+  useEffect(()=>{
     let eventListener = EventRegister.addEventListener(
-      'changeThemeEvent',
+      'appChangeThemeEvent',
       data => {
         setDarkApp(data);
       },
@@ -36,24 +94,12 @@ const App = () => {
     return () => {
       EventRegister.removeEventListener(eventListener);
     };
-}, []);
-/*
-<Stack.Screen
-          name="ISeek"
-          component={HomeScreen}
-        />*/
+  }, []);
   return (
-    <ApplicationProvider {...eva} theme={eva.light}>
     <NavigationContainer theme={appTheme}>
-      <Stack.Navigator>
-        <Stack.Screen name="Camera" component={XCamera} options={{title:'iSeek Camera'}}/>
-        <Stack.Screen name="Settings" component={settingspage} options={{title:'Settings'}}/>
-        <Stack.Screen name="Faq" component={faqpage} options={{title:'FAQ'}}/>
-        <Stack.Screen name="Message" component={message} options={{title: 'Message'}}/>
-      </Stack.Navigator>
+      <AppDrawer />
     </NavigationContainer>
-    </ApplicationProvider>
   );
-};
+}
 
-export default App ;
+export default App;

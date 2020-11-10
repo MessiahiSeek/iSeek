@@ -10,12 +10,13 @@ import { render } from 'react-dom';
 import * as Speech from 'expo-speech';
 import Icon from 'react-native-vector-icons/Ionicons';
 import ActionButton from 'react-native-action-button';
-import { Left } from 'native-base';
+import { Header, Left } from 'native-base';
 import { YellowBox } from 'react-native'
 import * as ImagePicker from 'expo-image-picker';
 import { Video } from 'expo-av';
 import { settingspage } from './settingspage.js';
 import { message } from './message.js';
+import { Container } from 'semantic-ui-react';
 
 
 YellowBox.ignoreWarnings([

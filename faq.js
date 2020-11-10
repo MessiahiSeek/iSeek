@@ -5,17 +5,20 @@ import { Avatar, Button, Text, List } from '@ui-kitten/components';
 import { Header } from '@react-navigation/stack';
 import { Card, CardTitle, CardContent, CardAction, CardButton, CardImage } from 'react-native-cards'; 
 import { render } from 'react-dom';
+import {DrawerActions, NavigationContainer, DefaultTheme, DarkTheme, useTheme} from '@react-navigation/native';
 
 
 
 export const faqpage =({navigation}) => {
-
+  const {colors} = useTheme();
   return(
   
-<SafeAreaView style={styles.container}>
-            <ScrollView style={styles.scrollView}>
-
-            <Card>
+<SafeAreaView style={{
+        flex: 1,
+        backgroundColor: colors.backgroundColor,
+}}>
+            <ScrollView>
+            <Card style={{Color: colors.card}}>
     <CardTitle
       title="What is ISeek?"
     />
@@ -63,48 +66,6 @@ export const faqpage =({navigation}) => {
         </SafeAreaView>
   
 );
-      
-    }
+}
 
-    const styles = StyleSheet.create({
-      container: {
-        flex: 1,
-        backgroundColor: '#0e68b3',
-      },
-      button1: {
-        height: 150,
-        marginTop: 10,
-        marginLeft: 8,
-        width: '95%',
-        borderRadius: 20,
-        backgroundColor: '#6bcbeb',
-      },
-      button2: {
-        height: 150,
-        marginTop: 10,
-        marginLeft: 8,
-        width: '95%',
-        borderRadius: 20,
-        backgroundColor: '#07a5dc',
-      },
-      button3: {
-        height: 150,
-        marginTop: 10,
-        marginLeft: 8,
-        width: '95%',
-        borderRadius: 20,
-        backgroundColor: '#0290cf',
-      },
-      button4: {
-        height: 150,
-        marginTop: 10,
-        marginLeft: 8,
-        width: '95%',
-        borderRadius: 20,
-        backgroundColor: '#037ec3',
-      },
-      Subtitle: {
-        alignContent: "center",
-      },
-    });
-  
+    
