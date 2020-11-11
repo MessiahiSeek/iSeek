@@ -2,15 +2,25 @@ import React, { Component } from 'react';
 import { Entypo } from '@expo/vector-icons'; 
 import { SafeAreaView, ScrollView, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import { BlurView } from 'expo-blur';
-import Icon from 'react-native-vector-icons/Ionicons'
+import Icon from 'react-native-vector-icons/Ionicons';
 import { useTheme } from '@react-navigation/native';
 import { Container, Header, Content, View, Alert, Text, Footer, FooterTab, Fab, Left, Body, Right, Title, Tab, Tabs, Styles } from 'native-base';
 import {  Button, ButtonGroup, Layout, Spinner, Divider, Caption, Rubik, Tile, Image, Subtitle, ImageBackground, Overlay } from '@shoutem/ui';
 import { XCamera } from './iCamera.js';
 import { settingspage } from './settingspage.js';
 import { color } from 'react-native-reanimated';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 
+function MyDrawer() {
+  return (
+    <Drawer.Navigator drawerContent={props => <CustomDrawerContent {...props} />}>
+      <Drawer.Screen name="Feed" component={Feed} />
+      <Drawer.Screen name="Notifications" component={Notifications} />
+    </Drawer.Navigator>
+  );
+}
 
+const Drawer = createDrawerNavigator();
 
 export const HomeScreen =({navigation}) => {
 
@@ -28,6 +38,8 @@ export const HomeScreen =({navigation}) => {
     borderBottomWidth: 1,
     }}
   >
+
+<MyDrawer />
 
   <Button
     style={styles.button}
