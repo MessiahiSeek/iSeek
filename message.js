@@ -1,3 +1,4 @@
+import { Container, View } from 'native-base';
 import React, { useState } from 'react';
 import { GiftedChat } from 'react-native-gifted-chat';
 
@@ -25,11 +26,15 @@ export const message =({navigation}) => {
     setMessages(GiftedChat.append(messages, newMessage));
   }
 
+
+  
   return(
+
     <GiftedChat
     messages={messages}
     onSend={newMessage => handleSend(newMessage)}
     user={{ _id: 1 }}
     />
+    
   );
 }
