@@ -385,14 +385,20 @@ const handleOnPressOut = () => {
       </TouchableOpacity>  
       }
 
+      <TouchableOpacity style = {{position: 'absolute', borderRadius:"100%",bottom:'9%',left:'75%'}} onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}> 
+    {isFetching ?  <ActivityIndicator color="#0f0"></ActivityIndicator> :
+         <Image source={require("./images/chat.png")} style={{ width: 55, height: 55 ,  borderRadius:"100%"}} />}
+      </TouchableOpacity> 
+
       <TouchableOpacity style = {{position: 'absolute', borderRadius:"100%",bottom:'9%',left:'10%'}} onPress={() => {setType(type === Camera.Constants.Type.back? Camera.Constants.Type.front: Camera.Constants.Type.back);}}> 
     {isFetching ?  <ActivityIndicator color="#0f0"></ActivityIndicator> :
          <Image source={require("./images/flipcamera.png")} style={{ width: 55, height: 55 ,  borderRadius:"100%"}} />}
       </TouchableOpacity> 
 
-      <TouchableOpacity style = {{position: 'absolute', borderRadius:"100%",bottom:'9%',left:'75%'}} onPress={() => checksetVid(!checkVid)}> 
+      
+      <TouchableOpacity style = {{position: 'absolute', borderRadius:"100%",bottom:'87.5%',left:'45%'}} onPress={() => checksetVid(!checkVid)}> 
     {isFetching ?  <ActivityIndicator color="#0f0"></ActivityIndicator> :
-         <Image source={require("./images/options.png")} style={{ width: 55, height: 55 ,  borderRadius:"100%"}} />}
+         <Icon name="ios-refresh-circle" color="#ccc" size={50}/>}
       </TouchableOpacity> 
 
 
