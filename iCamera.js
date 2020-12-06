@@ -17,6 +17,7 @@ import { Video } from 'expo-av';
 import { settingspage } from './settingspage.js';
 import { message } from './message.js';
 import { Container } from 'semantic-ui-react';
+import { DrawerActions } from '@react-navigation/native';
 
 
 YellowBox.ignoreWarnings([
@@ -306,7 +307,9 @@ const handleOnPressOut = () => {
  
   return (
     
+      
     <View style={styles.container}>
+      
         {(photoJson != "" && vid == null && !isPictureFetching)  && (
            
            <ImageBackground source ={{ uri:`data:image/jpg;base64,${photoJson}`}} style={{flex:1, height: undefined, width: undefined}}>
@@ -373,47 +376,55 @@ const handleOnPressOut = () => {
         <Camera style={{ flex: 1 }} type={type} ref={ref => { this.camera = ref; }}>
       </Camera>
       {!checkVid ? 
-      <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'9%',left:'45%'}} onPress={ async () =>  this.snap()}>
+      <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'9%',left:'42.5%'}} onPress={ async () =>  this.snap()}>
          <Image source={require("./images/cam.png")} style={{ width: 55, height: 55 , borderRadius:100}} onPress={ async () =>  this.snap()}/>
       </TouchableOpacity>
          : 
-         <TouchableOpacity style = {{position: 'absolute', borderRadius:"100%",bottom:'9%',left:'45%'}} onPressIn={starVideo} onPressOut = {stopVideo}>
+         <TouchableOpacity style = {{position: 'absolute', borderRadius:"100%",bottom:'9%',left:'42.5%'}} onPressIn={starVideo} onPressOut = {stopVideo}>
          <Image source={require("./images/vid.jpeg")} style={{ width: 55, height: 55 ,  borderRadius:"100%"}} />
       </TouchableOpacity>  
       }
 
-      <TouchableOpacity style = {{position: 'absolute', borderRadius:"100%",bottom:'9%',left:'10%'}} onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}> 
+      <TouchableOpacity style = {{position: 'absolute', borderRadius:"100%",bottom:'9%',left:'75%'}} onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}> 
     {isFetching ?  <ActivityIndicator color="#0f0"></ActivityIndicator> :
          <Image source={require("./images/chat.png")} style={{ width: 55, height: 55 ,  borderRadius:"100%"}} />}
       </TouchableOpacity> 
 
+      <TouchableOpacity style = {{position: 'absolute', borderRadius:"100%",bottom:'9%',left:'10%'}} onPress={() => {setType(type === Camera.Constants.Type.back? Camera.Constants.Type.front: Camera.Constants.Type.back);}}> 
+    {isFetching ?  <ActivityIndicator color="#0f0"></ActivityIndicator> :
+         <Image source={require("./images/flipcamera.png")} style={{ width: 55, height: 55 ,  borderRadius:"100%"}} />}
+      </TouchableOpacity> 
 
-        <ActionButton style={styles.close2} buttonColor="rgba(23,176,60,.71)">  
-        <ActionButton.Item title="Settings page" buttonColor='#1ff691' onPress={()=>navigation.navigate('Settings')}> 
-                <Icon name="ios-settings"/>
-        </ActionButton.Item>
-        <ActionButton.Item title="Messaging page" buttonColor='#1ffff1' onPress={()=>navigation.navigate('Message')}> 
-                <Icon name="ios-chatbubble-ellipses-sharp"/>
-        </ActionButton.Item>
-        
-        <ActionButton.Item title="Faq page" buttonColor='#1f2321' onPress={()=>navigation.navigate('Faq')}> 
-                <Icon name="ios-book"/>
-        </ActionButton.Item>
-          <ActionButton.Item title="Switch Camera" buttonColor='#5d2124' onPress={() => {setType(type === Camera.Constants.Type.back? Camera.Constants.Type.front: Camera.Constants.Type.back);}}>
-            <Icon name="ios-refresh"/>
-          </ActionButton.Item>
-                <ActionButton.Item title="Camera Roll" buttonColor='#1d4691' onPress = {() =>  this.getCameraPic()}> 
-                <Icon name="ios-browsers"/>
-                </ActionButton.Item>
-                {checkVid ? <ActionButton.Item buttonColor='#5d27f2' title="switch to camera" onPress={() => checksetVid(!checkVid)}  >
-                  <Icon name="ios-videocam"/>
-            </ActionButton.Item> :
-            <ActionButton.Item buttonColor='#5d27f2' title="switch to video" onPress={() => checksetVid(!checkVid)}  >
-            <Icon name="ios-videocam"/>
-      </ActionButton.Item>}
       
+      <TouchableOpacity style = {{position: 'absolute', borderRadius:"100%",bottom:'87.5%',left:'45%'}} onPress={() => checksetVid(!checkVid)}> 
+    {isFetching ?  <ActivityIndicator color="#0f0"></ActivityIndicator> :
+         <Icon name="ios-refresh-circle" color="#ccc" size={50}/>}
+      </TouchableOpacity> 
 
-          </ActionButton>
+
+
+
+      <TouchableOpacity style = {{position: 'absolute', borderRadius:"100%",bottom:'90%',left:'5%'}} onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}> 
+    {isFetching ?  <ActivityIndicator color="#0f0"></ActivityIndicator> :
+         <Icon
+         name="ios-menu"
+         color="#ccc"
+         size={25}
+         onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
+       />}
+      </TouchableOpacity> 
+
+      <TouchableOpacity style = {{position: 'absolute', borderRadius:"100%",bottom:'90%',left:'90%'}} onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}> 
+    {isFetching ?  <ActivityIndicator color="#0f0"></ActivityIndicator> :
+         <Icon
+         name="ios-browsers"
+         color="#ccc"
+         size={25}
+         onPress = {() =>  this.getCameraPic()}
+       />}
+
+      </TouchableOpacity>
+
         </>  
       ) }
         

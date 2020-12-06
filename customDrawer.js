@@ -4,9 +4,11 @@ import {
     DrawerItemList,
     DrawerItem,
     DrawerContent,
+    navigation,
+    DrawerActions,
 } from '@react-navigation/drawer';
-import {DrawerActions, NavigationContainer, DefaultTheme, DarkTheme, useTheme} from '@react-navigation/native';
-import {Icon, Header, Content, Footer, List, ListItem, Body, Text, Right, Left, Switch, H3, colors} from 'native-base';
+import { NavigationContainer, DefaultTheme, DarkTheme, useTheme} from '@react-navigation/native';
+import {Icon, Header, Content, Footer, List, ListItem, Body, Text, Right, Left, Switch, H3, colors, Thumbnail, Button} from 'native-base';
 import Animated from 'react-native-reanimated';
 import { Container } from 'semantic-ui-react';
 import { View } from '@shoutem/ui';
@@ -23,10 +25,24 @@ function Sidebar({progress, ...props}) {
     });
     return (
         <NavigationContainer independent={true}>
-            <Header style={{backgroundColor: colors.card}}>
-                <H3 style={{color: colors.text}}>ISeek</H3>
+            <Header style={{backgroundColor: colors.card, borderBottomWidth: 0}}>
+                <Right>
+                    <Button transparent>
+                        <Icon 
+                        name="menu" />
+                    </Button>
+                </Right>
             </Header>
             <Content contentContainerStyle={{flex: 1}}>
+                <ListItem thumbnail>
+                    <Left>
+                        <Thumbnail
+                        source={require("./assets/icon.png")} />
+                    </Left>
+                    <Body>
+                        <H3 style={{color: colors.text}}>ISeek</H3>
+                    </Body>
+                </ListItem>
         <DrawerContentScrollView {...props}>
             <Animated.View style={{transform: [{translateX}]}}>
             <DrawerItemList {...props} />
@@ -49,7 +65,7 @@ function Sidebar({progress, ...props}) {
                 </List>
 
         </Content>
-        <Footer style={{backgroundColor: colors.card}}/>
+        <Footer style={{backgroundColor: colors.card, borderTopWidth: 0}}/>
         </NavigationContainer>
     );
 }
