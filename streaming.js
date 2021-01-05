@@ -64,7 +64,6 @@ export const streamingPage = ({navigation}) => {
         console.log(`permissions status: ${status}`);
         setHasPermission(status === 'granted');
 
-        console.log("reached here");
         //we must always wait for the Tensorflow API to be ready before any TF operation...
         await tf.ready();
         //load the mobilenet model and save it in state
