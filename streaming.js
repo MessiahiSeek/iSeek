@@ -423,6 +423,17 @@ const styles = StyleSheet.create({
           paddingRight: 30,
           backgroundColor: '#cccccc'
         },
+        inpAn: {
+          fontSize: 16,
+          paddingHorizontal: 10,
+          paddingVertical: 8,
+          borderWidth: 0.5,
+          borderColor: 'grey',
+          borderRadius: 3,
+          color: 'black',
+          paddingRight: 30,
+          backgroundColor: '#cccccc'
+        },
       });
       
           
