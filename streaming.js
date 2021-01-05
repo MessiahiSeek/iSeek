@@ -220,7 +220,7 @@ const renderCameraView = () => {
     return <View>
       <TouchableOpacity /*style = {{position: 'absolute', borderRadius:"100%",bottom:'9%',left:'75%'}}*/ onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}> 
     {isFetching ?  <ActivityIndicator color="#0f0"></ActivityIndicator> :
-         <Image source={require("./images/chat.png")} style={{ width: 55, height: 55 ,  borderRadius:"100%"}} />}
+         <Image source={require("./images/chat.png")} style={{ width: 55, height: 55 ,  borderRadius:100}} />}
       </TouchableOpacity> 
     </View>
   }
@@ -254,7 +254,7 @@ const renderCameraView = () => {
     return <Provider>
       <View>
       <TouchableOpacity onPress={() => setIsDialogVisible(true)}>
-      <Image source={require("./images/chat.png")} style={{ width: 55, height: 55 ,  borderRadius:"100%"}} />
+      <Image source={require("./images/chat.png")} style={{ width: 55, height: 55 ,  borderRadius:100}} />
       </TouchableOpacity> 
       <Portal >
         <Dialog visible={isDialogVisible}

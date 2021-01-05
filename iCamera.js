@@ -537,23 +537,23 @@ const handleOnPressOut = () => {
          <Image source={require("./images/cam.png")} style={{ width: 55, height: 55 , borderRadius:100}} onPress={ async () =>  this.snap()}/>
       </TouchableOpacity>
          : 
-         <TouchableOpacity style = {{position: 'absolute', borderRadius:"100%",bottom:'9%',left:'42.5%'}} onPressIn={starVideo} onPressOut = {stopVideo}>
-         <Image source={require("./images/vid.jpeg")} style={{ width: 55, height: 55 ,  borderRadius:"100%"}} />
+         <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'9%',left:'42.5%'}} onPressIn={starVideo} onPressOut = {stopVideo}>
+         <Image source={require("./images/vid.jpeg")} style={{ width: 55, height: 55 ,  borderRadius:100}} />
       </TouchableOpacity>  
       }
 
-      <TouchableOpacity style = {{position: 'absolute', borderRadius:"100%",bottom:'9%',left:'75%'}} onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}> 
+      <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'9%',left:'75%'}} onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}> 
     {isFetching ?  <ActivityIndicator color="#0f0"></ActivityIndicator> :
-         <Image source={require("./images/chat.png")} style={{ width: 55, height: 55 ,  borderRadius:"100%"}} />}
+         <Image source={require("./images/chat.png")} style={{ width: 55, height: 55 ,  borderRadius:100}} />}
       </TouchableOpacity> 
 
-      <TouchableOpacity style = {{position: 'absolute', borderRadius:"100%",bottom:'9%',left:'10%'}} onPress={() => {setType(type === Camera.Constants.Type.back? Camera.Constants.Type.front: Camera.Constants.Type.back);}}> 
+      <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'9%',left:'10%'}} onPress={() => {setType(type === Camera.Constants.Type.back? Camera.Constants.Type.front: Camera.Constants.Type.back);}}> 
     {isFetching ?  <ActivityIndicator color="#0f0"></ActivityIndicator> :
-         <Image source={require("./images/flipcamera.png")} style={{ width: 55, height: 55 ,  borderRadius:"100%"}} />}
+         <Image source={require("./images/flipcamera.png")} style={{ width: 55, height: 55 ,  borderRadius:100}} />}
       </TouchableOpacity> 
 
       
-      <TouchableOpacity style = {{position: 'absolute', borderRadius:"100%",bottom:'87.5%',left:'45%'}} onPress={() => checksetVid(!checkVid)}> 
+      <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'87.5%',left:'45%'}} onPress={() => checksetVid(!checkVid)}> 
     {isFetching ?  <ActivityIndicator color="#0f0"></ActivityIndicator> :
          <Icon name="ios-refresh-circle" color="#ccc" size={50}/>}
       </TouchableOpacity> 
@@ -561,7 +561,7 @@ const handleOnPressOut = () => {
 
 
 
-      <TouchableOpacity style = {{position: 'absolute', borderRadius:"100%",bottom:'90%',left:'5%'}} onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}> 
+      <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'90%',left:'5%'}} onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}> 
     {isFetching ?  <ActivityIndicator color="#0f0"></ActivityIndicator> :
          <Icon
          name="ios-menu"
@@ -571,7 +571,7 @@ const handleOnPressOut = () => {
        />}
       </TouchableOpacity> 
 
-      <TouchableOpacity style = {{position: 'absolute', borderRadius:"100%",bottom:'90%',left:'90%'}} onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}> 
+      <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'90%',left:'90%'}} onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}> 
     {isFetching ?  <ActivityIndicator color="#0f0"></ActivityIndicator> :
          <Icon
          name="ios-browsers"
