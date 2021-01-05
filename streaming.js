@@ -23,7 +23,7 @@ import * as tf from '@tensorflow/tfjs';
 import * as mobilenet from '@tensorflow-models/mobilenet';
 import {cameraWithTensors} from '@tensorflow/tfjs-react-native';
 
-//console.disableYellowBox = true;
+console.disableYellowBox = true;
 
 export const streamingPage = ({navigation}) => {
     const [predictionFound, setPredictionFound] = useState(false);
@@ -61,12 +61,15 @@ export const streamingPage = ({navigation}) => {
       (async () => {
         //check permissions
         const { status } = await Camera.requestPermissionsAsync();
-        //console.log(`permissions status: ${status}`);
+        console.log(`permissions status: ${status}`);
         setHasPermission(status === 'granted');
+
+        console.log("reached here");
         //we must always wait for the Tensorflow API to be ready before any TF operation...
         await tf.ready();
         //load the mobilenet model and save it in state
         setMobilenetModel(await loadMobileNetModel());
+        console.log("reached here");
         setFrameworkReady(true);
       })();
     }
@@ -122,7 +125,7 @@ const getPrediction = async(tensor) => {
 
     //topk set to 1
     const prediction = await mobilenetModel.classify(tensor, 1);
-    //console.log(`prediction: ${JSON.stringify(prediction)}`);
+    console.log(`prediction: ${JSON.stringify(prediction)}`);
     //console.log(prediction[0].className);
 
     if(!prediction || prediction.length === 0) { return; }
@@ -134,7 +137,6 @@ const getPrediction = async(tensor) => {
       Vibration.vibrate();
     }
     if(prediction[0].probability > 0.4) {
-      //stop looping!
       setPrediction(prediction[0].className)
       cancelAnimationFrame(requestAnimationFrameId);
       setPredictionFound(true);
