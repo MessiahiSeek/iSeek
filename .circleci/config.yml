@@ -9,7 +9,7 @@ publish: &publish
 
     - run:
         name: Installing dependencies
-        command: npm --max-old-space-size=4096 ci
+        command: npm --max-old-space-size=5120 ci
 
     - run:
         name: Login into Expo
