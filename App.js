@@ -5,6 +5,7 @@ import { ApplicationProvider, Layout } from '@ui-kitten/components';
 import { DarkTheme, DefaultTheme, getFocusedRouteNameFromRoute, NavigationContainer, useIsFocused, useTheme } from '@react-navigation/native';
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem, } from '@react-navigation/drawer';
 import { XCamera } from './iCamera.js';
+import { streamingPage } from './streaming.js';
 import { settingspage } from './settingspage.js';
 import { faqpage } from './faq.js';
 import { message } from './message.js';
@@ -72,6 +73,16 @@ const AppDrawer = () => {
       options={{
         drawerIcon: ({focused, color, size}) => (
           <Icon name="ios-book" style={{fontSize: size, color: color}} />
+        ),
+      }}
+      />
+      <Drawer.Screen
+      name="BETA Streaming"
+      color = {Colors.Title}
+      component={streamingPage}
+      options={{
+        drawerIcon: ({focused, color, size}) => (
+          <Icon name="ios-camera" style={{fontSize: size, color: color}} />
         ),
       }}
       />
