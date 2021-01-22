@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
+import { Alert } from 'react-native';
 import { GiftedChat, SystemMessage } from 'react-native-gifted-chat';
 import { XCamera } from './iCamera.js';
 import { settingspage } from './settingspage.js';
@@ -73,6 +74,10 @@ export const message =({navigation}) => {
         XCamera.findText();
         break;
     default:
+        if(json.textResponse.startsWith('%',0)){
+          Alert.alert("Sorry this is not supported on this page");
+        }
+      else{
       setMessages(previousMessages => GiftedChat.append(previousMessages,{
         _id: 3,
         text: json.textResponse,
@@ -84,6 +89,7 @@ export const message =({navigation}) => {
         }
       } 
       ));
+    }
       break;
     }
   })

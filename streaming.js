@@ -209,7 +209,25 @@ const renderCameraView = () => {
             body: body
         });
         const data = await response.json();
-        Speech.speak("You said " + data.voiceResponse);
+       //Speech.speak("You said " + data.voiceResponse);
+        switch(data.textResponse){
+          case ("%0oc"):
+            navigation.navigate('Camera');
+            break; 
+          case("%0om"):
+            navigation.navigate('Messenger');
+            break;
+          case("%0tp"):
+            console.log("her")
+            navigation.navigate('Camera');
+            console.log("herer")
+            break;
+          case("%0ri"):
+            Speech.speak("The Object Currently Shown is " + prediction);
+            break;
+        default:
+          Speech.speak(data.textResponse);
+        }
     } catch(error) {
         console.log('There was an error reading file', error);
         stopRecording();

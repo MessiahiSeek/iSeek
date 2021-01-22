@@ -105,8 +105,8 @@ export const XCamera =({navigation}) => {
            //photo.exif.Orientation = 1;            
             setPicStr(photo.base64);
             //console.log(photo.base64)
-           //fetch('http://ec2-3-23-33-73.us-east-2.compute.amazonaws.com:5000/image',
-           fetch('http://153.42.129.91:5000/image',{
+           fetch('http://iseek.cs.messiah.edu:5000/image',{
+           //fetch('http://153.42.129.91:5000/image',{
              method: 'POST',
              headers:{
                Accept: 'application/json',
@@ -178,7 +178,7 @@ const getTranscription = async () => {
       var body = new FormData();
       body.append('file',file);
       
-      const response = await fetch(/*'http://ec2-3-23-33-73.us-east-2.compute.amazonaws.com:5000/recording'*/'http://153.42.129.91:5000/recording', {
+      const response = await fetch('http://iseek.cs.messiah.edu:5000/recording'/*'http://ec2-3-23-33-73.us-east-2.compute.amazonaws.com:5000/recording''http://153.42.129.91:5000/recording'*/, {
           method: 'POST',
           body: body
       });
@@ -207,8 +207,8 @@ const getTranscription = async () => {
                    setIsPictureFetching(true);
                     setPicStr(photo.base64);
                     console.log(photo.base64)
-                   //fetch('http://ec2-3-23-33-73.us-east-2.compute.amazonaws.com:5000/image',
-                   fetch('http://153.42.129.91:5000/image',{
+                   fetch('http://iseek.cs.messiah.edu:5000/image',{
+                   //fetch('http://153.42.129.91:5000/image',{
                      method: 'POST',
                      headers:{
                        Accept: 'application/json',
@@ -225,23 +225,25 @@ const getTranscription = async () => {
                     })
                  });
              }  
-             
            }
            snap2();
-          
           console.log("herer")
           break;
-
         case("%0ri"):
+        if(objectsInPic === ""){
+          Alert.alert("You must take a picture first")
+        }
+        else{
           ListObjects();
-          break;
+          
+        }break;
       default:
         Speech.speak(data.textResponse);
+        break;
       }
   } catch(error) {
       console.log('There was an error reading file', error);
       stopRecording();
-      // resetRecording();
   }
   setIsFetching(false);
 }
@@ -281,7 +283,7 @@ const handleOnPressOut = () => {
       Speech.speak(obj[i]);
     }
   }
-  }
+  }/*
   findText = async () => {
     SetLoad(true);
      fetch('http://ec2-3-23-33-73.us-east-2.compute.amazonaws.com:5000/text',
@@ -309,7 +311,8 @@ const handleOnPressOut = () => {
           }
            )
            
-  }
+  }*/
+
   getCameraPic = async () =>{
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -321,7 +324,7 @@ const handleOnPressOut = () => {
 
     if (!result.cancelled) {
       setIsPictureFetching(true);
-      fetch('http://ec2-3-23-33-73.us-east-2.compute.amazonaws.com:5000/image',
+      fetch('http://iseek.cs.messiah.edu:5000/image',
       //fetch('153.42.129.91:5000/image',
            {
              method: 'POST',
@@ -340,6 +343,7 @@ const handleOnPressOut = () => {
             })
     }
   }
+  /*
   starVideo = async () =>
   {
       console.log("world")
@@ -371,13 +375,15 @@ const handleOnPressOut = () => {
       this.camera.stopRecording();
   }
  
-  
+  */
   return (
     
       
     <View style={styles.container}>
+
       
-        {(photoJson != "" && vid == null && !isPictureFetching)  && (
+      
+        {(photoJson != ""  && !isPictureFetching)  && (
            
            <ImageBackground source ={{ uri:`data:image/jpg;base64,${photoJson}`}} style={{flex:1, height: undefined, width: undefined}}>
             {(Load) && (<ActivityIndicator alignContent="center" size="large" color="#000" 
@@ -393,6 +399,10 @@ const handleOnPressOut = () => {
           <ActionButton.Item buttonColor='#5f6702' title="Save Picture"onPress={()=>this.findText()} >
             <Icon name="ios-book" onPress={()=>this.SavePicture()}/>
           </ActionButton.Item>
+
+          <ActionButton.Item buttonColor='#5f6702' title="Back to Home Screen"onPress={()=>this.findText()} >
+            <Icon name="ios-book" onPress={()=>setPhoto("")}/>
+          </ActionButton.Item>
           </ActionButton>
           
 
@@ -405,9 +415,10 @@ const handleOnPressOut = () => {
           </ImageBackground>
         )}
 
-        {(photoJson == "" && vid != null && !isPictureFetching)  && (
+
+{/*
+        {(photoJson == ""  && !isPictureFetching)  && (
            <>
-         
            <Video
            source={{ vid }}
            rate={1.0}
@@ -416,7 +427,6 @@ const handleOnPressOut = () => {
            resizeMode="cover"
            shouldPlay
            isLooping
-           //style={{ width: 300, height: 300 }}
          />
 
             {(Load) && (
@@ -437,7 +447,7 @@ const handleOnPressOut = () => {
           </>
         )}
 
-          
+            */}
 
       {(isPictureFetching)&&<View style={[styles.container_nik,styles.horizontal]}>
         <ActivityIndicator alignContent="center" size="large" color="#000"></ActivityIndicator>
@@ -454,11 +464,7 @@ const handleOnPressOut = () => {
       <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'9%',left:'42.5%'}} onPress={ async () =>  this.snap()}>
          <Image source={require("./images/cam.png")} style={{ width: 55, height: 55 , borderRadius:100}} onPress={ async () =>  this.snap()}/>
       </TouchableOpacity>
-         /*: 
-         <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'9%',left:'42.5%'}} onPressIn={starVideo} onPressOut = {stopVideo}>
-         <Image source={require("./images/vid.jpeg")} style={{ width: 55, height: 55 ,  borderRadius:100}} />
-      </TouchableOpacity>  
-      */}
+        }
 
       <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'9%',left:'75%'}} onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}> 
     {isFetching ?  <ActivityIndicator color="#0f0"></ActivityIndicator> :
@@ -471,14 +477,7 @@ const handleOnPressOut = () => {
     </TouchableOpacity> 
 
       
-      {/*<TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'87.5%',left:'45%'}} onPress={() => checksetVid(!checkVid)}> 
-    {isFetching ?  <ActivityIndicator color="#0f0"></ActivityIndicator> :
-         <Icon name="ios-refresh-circle" color="#ccc" size={50}/>}
-      </TouchableOpacity> 
-    */}
-
-
-
+    
       <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'90%',left:'5%'}} onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}> 
     {isFetching ?  <ActivityIndicator color="#0f0"></ActivityIndicator> :
          <Icon
