@@ -71,6 +71,7 @@ export const message =({navigation}) => {
         break;
       case("%0ri"):
         XCamera.findText();
+        break;
     default:
       setMessages(previousMessages => GiftedChat.append(previousMessages,{
         _id: 3,

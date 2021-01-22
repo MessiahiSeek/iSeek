@@ -1,6 +1,6 @@
 import React, { useState, useEffect, Component  } from 'react';
-import { Text, View, TouchableOpacity, ref, StyleSheet, ActivityIndicator, Image, ImageBackground  } from 'react-native';
-import {  Button, ButtonGroup,/* Icon*/ Layout, Spinner } from '@ui-kitten/components';
+import { Button, Text, View, TouchableOpacity, ref, StyleSheet, ActivityIndicator, Image, ImageBackground , Alert } from 'react-native';
+//import {  Button, ButtonGroup,/* Icon*/ Layout, Spinner } from '@ui-kitten/components';
 import { Camera } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
 import { Audio } from 'expo-av';
@@ -19,10 +19,7 @@ import { message } from './message.js';
 import { Container } from 'semantic-ui-react';
 import { DrawerActions } from '@react-navigation/native';
 
-//tensorflow
-import * as tf from '@tensorflow/tfjs';
-import * as mobilenet from '@tensorflow-models/mobilenet';
-import {cameraWithTensors} from '@tensorflow/tfjs-react-native';
+
 
 
 //disable yellow warnings on EXPO client!
@@ -73,14 +70,13 @@ export const XCamera =({navigation}) => {
   const [vid,setVid] = useState(null);
   const [checkVid,checksetVid] = useState(null);
 
-  //Tensorflow and Permissions
-  const [mobilenetModel, setMobilenetModel] = useState(null);
-  const [frameworkReady, setFrameworkReady] = useState(false);
+
 
   useEffect(() => {
     (async () => {
       const { status } = await Camera.requestPermissionsAsync();
       setHasPermission(status === 'granted');
+      console.log("Camera status granted")
     })();
   }, []);
 
@@ -95,161 +91,22 @@ export const XCamera =({navigation}) => {
     })();
   }, []);
 
-  const TensorCamera = cameraWithTensors(Camera);
-  let requestAnimationFrameId = 0;
-
-
-  //performance hacks (Platform dependent)
-  const textureDims = Platform.OS === "ios"? { width: 1080, height: 1920 } : { width: 1600, height: 1200 };
-  const tensorDims = { width: 152, height: 200 }; 
-
-  //-----------------------------
-  // Run effect once
-  // 1. Check camera permissions
-  // 2. Initialize TensorFlow
-  // 3. Load Mobilenet Model
-  //-----------------------------
-  useEffect(() => {
-    if(!frameworkReady) {
-      (async () => {
-
-
-        
-        //check permissions
-        const { status } = await Camera.requestPermissionsAsync();
-        console.log(`permissions status: ${status}`);
-        setHasPermission(status === 'granted');
-
-
-        //we must always wait for the Tensorflow API to be ready before any TF operation...
-        await tf.ready();
-
-
-        //load the mobilenet model and save it in state
-        setMobilenetModel(await loadMobileNetModel());
-
-
-        setFrameworkReady(true);
-      })();
-    }
-  }, []);
-
-
-    //--------------------------
-  // Run onUnmount routine
-  // for cancelling animation 
-  // (if running) to avoid leaks
-  //--------------------------
-  useEffect(() => {
-    return () => {
-      cancelAnimationFrame(requestAnimationFrameId);
-    };
-  }, [requestAnimationFrameId]);
-
-
-  //-----------------------------------------------------------------
-  // Loads the mobilenet Tensorflow model: 
-  // https://github.com/tensorflow/tfjs-models/tree/master/mobilenet
-  // Parameters:
-  // 
-  // NOTE: Here, I suggest you play with the version and alpha params
-  // as they control performance and accuracy for your app. For instance,
-  // a lower alpha increases performance but decreases accuracy. More
-  // information on this topic can be found in the link above.  In this
-  // tutorial, I am going with the defaults: v1 and alpha 1.0
-  //-----------------------------------------------------------------
-  const loadMobileNetModel = async () => {
-    const model = await mobilenet.load();
-    return model;
-  }
-
-/*-----------------------------------------------------------------------
-MobileNet tensorflow model classify operation returns an array of prediction objects with this structure: 
-
-prediction = [ {"className": "object name", "probability": 0-1 } ]
-
-where:
-  className = The class of the object being identified. Currently, this model identifies 1000 different classes.
-  probability = Number between 0 and 1 that represents the prediction's probability 
-
-Example (with a topk parameter set to 3 => default):
-  [
-     {"className":"joystick","probability":0.8070220947265625},
-     {"className":"screen, CRT screen","probability":0.06108357384800911},
-     {"className":"monitor","probability":0.04016926884651184}
-  ]
-
-In this case, we use topk set to 1 as we are interested in the higest result for both performance and simplicity. This means the array will return 1 prediction only!
-------------------------------------------------------------------------*/
-const getPrediction = async(tensor) => {
-  if(!tensor) { return; }
-
-  //topk set to 1
-  const prediction = await mobilenetModel.classify(tensor, 1);
-  console.log(`prediction: ${JSON.stringify(prediction)}`);
-
-  if(!prediction || prediction.length === 0) { return; }
-
-  //only attempt translation when confidence is higher than 20%
-  if(prediction[0].probability > 0.2) {
-
-
-    //stop looping!
-    cancelAnimationFrame(requestAnimationFrameId);
-    setPredictionFound(true);
-
-
-    //get translation!
-    await getTranslation(prediction[0].className);
-  }
-}
-/*-----------------------------------------------------------------------
-Helper function to handle the camera tensor streams. Here, to keep up reading input streams, we use requestAnimationFrame JS method to keep looping for getting better predictions (until we get one with enough confidence level).
-More info on RAF: https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame
--------------------------------------------------------------------------*/
-const handleCameraStream = (imageAsTensors) => {
-  const loop = async () => {
-    const nextImageTensor = await imageAsTensors.next().value;
-    await getPrediction(nextImageTensor);
-    requestAnimationFrameId = requestAnimationFrame(loop);
-  };
-  if(!predictionFound) loop();
-}
-
-/*-----------------------------------------------------------------------
-Helper function to show the Camera View. 
-
-NOTE: Please note we are using TensorCamera component which is constructed on line: 37 of this function component. This is just a decorated expo.Camera component with extra functionality to stream Tensors, define texture dimensions and other goods. For further research:
-https://js.tensorflow.org/api_react_native/0.2.1/#cameraWithTensors
------------------------------------------------------------------------*/
-const renderCameraView = () => {
-  return <View style={styles.cameraView}>
-              <TensorCamera
-                style={styles.camera}
-                type={Camera.Constants.Type.back}
-                zoom={0}
-                cameraTextureHeight={textureDims.height}
-                cameraTextureWidth={textureDims.width}
-                resizeHeight={tensorDims.height}
-                resizeWidth={tensorDims.width}
-                resizeDepth={3}
-                onReady ={(imageAsTensors) => handleCameraStream(imageAsTensors)}//  ​={(imageAsTensors) => handleCameraStream(imageAsTensors)}
-                autorender={true}
-              />
-              <Text style={styles.legendTextField}>Point to any object and get its {availableLanguages.find(al => al.value === language).label } translation</Text>
-          </View>;
-}
 
   snap = async () => {
+    console.log("reached")
     if (this.camera) {
-      setIsPictureFetching(true);
+      console.log("hereeee");
+      
       const options = { quality: .1, base64: true, fixOrientation: true, 
         exif: true};
+        //const photo = await this.camera.takePictureAsync();
         await this.camera.takePictureAsync(options).then(photo => {
+          setIsPictureFetching(true);
            //photo.exif.Orientation = 1;            
             setPicStr(photo.base64);
-           fetch('http://ec2-3-23-33-73.us-east-2.compute.amazonaws.com:5000/image',
-           {
+            //console.log(photo.base64)
+           //fetch('http://ec2-3-23-33-73.us-east-2.compute.amazonaws.com:5000/image',
+           fetch('http://153.42.129.91:5000/image',{
              method: 'POST',
              headers:{
                Accept: 'application/json',
@@ -290,7 +147,7 @@ const renderCameraView = () => {
     try {
       await recording.prepareToRecordAsync(recordingOptions);
       await recording.startAsync();
-    } catch (error) {x
+    } catch (error) {
       console.log(error);
       stopRecording();
     }
@@ -321,12 +178,66 @@ const getTranscription = async () => {
       var body = new FormData();
       body.append('file',file);
       
-      const response = await fetch('http://ec2-3-23-33-73.us-east-2.compute.amazonaws.com:5000/recording', {
+      const response = await fetch(/*'http://ec2-3-23-33-73.us-east-2.compute.amazonaws.com:5000/recording'*/'http://153.42.129.91:5000/recording', {
           method: 'POST',
           body: body
       });
       const data = await response.json();
-      Speech.speak("You said " + data.voiceResponse);
+      console.log(data.textResponse)
+      switch(data.textResponse){
+        case ("%0oc"):
+          navigation.navigate('Camera');
+          break; 
+        case("%0om"):
+          navigation.navigate('Messenger');
+          break;
+        case("%0tp"):
+          console.log("her")
+          
+          snap2 = async () => {
+            console.log("reached")
+            if (this.camera) {
+              console.log("hereeee");
+              //
+              const options = { quality: .1, base64: true, fixOrientation: true, 
+                exif: true};
+                //const photo = await this.camera.takePictureAsync();
+                await this.camera.takePictureAsync(options).then(photo => {
+                   //photo.exif.Orientation = 1;            
+                   setIsPictureFetching(true);
+                    setPicStr(photo.base64);
+                    console.log(photo.base64)
+                   //fetch('http://ec2-3-23-33-73.us-east-2.compute.amazonaws.com:5000/image',
+                   fetch('http://153.42.129.91:5000/image',{
+                     method: 'POST',
+                     headers:{
+                       Accept: 'application/json',
+                       'Content-Type': 'application/json',
+                     },
+                     body: JSON.stringify({
+                       pictureString: photo.base64,
+                     }),
+                   }).then((response) => response.json())
+                   .then((json) => {
+                     setPhoto(json.pictureResponse);
+                     SetObjectsInPhoto(json.objects);
+                     setIsPictureFetching(false);
+                    })
+                 });
+             }  
+             
+           }
+           snap2();
+          
+          console.log("herer")
+          break;
+
+        case("%0ri"):
+          ListObjects();
+          break;
+      default:
+        Speech.speak(data.textResponse);
+      }
   } catch(error) {
       console.log('There was an error reading file', error);
       stopRecording();
@@ -388,10 +299,8 @@ const handleOnPressOut = () => {
             console.log(json.imageText);
              setTextinPic(json.imageText);
              SetLoad(false);
-
-
            if (textInPic === null){
-            Speech.speak("There is no  text in this picture.");
+            Speech.speak("There is no text in this picture.");
            }
            else{
            Speech.speak("The text in this picture is ");
@@ -462,6 +371,7 @@ const handleOnPressOut = () => {
       this.camera.stopRecording();
   }
  
+  
   return (
     
       
@@ -470,21 +380,27 @@ const handleOnPressOut = () => {
         {(photoJson != "" && vid == null && !isPictureFetching)  && (
            
            <ImageBackground source ={{ uri:`data:image/jpg;base64,${photoJson}`}} style={{flex:1, height: undefined, width: undefined}}>
-            
             {(Load) && (<ActivityIndicator alignContent="center" size="large" color="#000" 
-
             style={{position:"absolute"}}> </ActivityIndicator>)}
-          <View style={styles.close}>
-          <Button title="Save Picture" style={{position:"absolute", backgroundColor:'#F50303',borderRadius:10,borderWidth: 1,borderColor: '#fff'}} onPress={async () => this.SavePicture()}> Save Picture</Button>
-          </View>
-          <ActionButton style={styles.close2} buttonColor="rgba(231,76,60,1)">
+
+          <View style = {{position:"absolute", flex:'1', flexDirection:"row", borderRadius:100,bottom:'20%'}}>
+            
+          <ActionButton  buttonColor="rgba(231,76,60,1)">
           <ActionButton.Item buttonColor='#f0fff1' title="Read Objects out loud" onPress={()=>this.ListObjects()}>
             <Icon name="ios-text"   onPress={()=>this.ListObjects()}/>
           </ActionButton.Item>
-          <ActionButton.Item buttonColor='#5f6702' title="Find text in screen"onPress={()=>this.findText()} >
-            <Icon name="ios-book" onPress={()=>this.findText()}/>
+        
+          <ActionButton.Item buttonColor='#5f6702' title="Save Picture"onPress={()=>this.findText()} >
+            <Icon name="ios-book" onPress={()=>this.SavePicture()}/>
           </ActionButton.Item>
           </ActionButton>
+          
+
+          <TouchableOpacity style={{bottom:'-80%',left:'500%'}} onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}> 
+    {isFetching ?  <ActivityIndicator color="#0f0"></ActivityIndicator> :
+         <Image source={require("./images/chat.png")} style={{ width: 55, height: 55 ,  borderRadius:100}} />}
+      </TouchableOpacity> 
+      </View>
           
           </ImageBackground>
         )}
@@ -532,32 +448,34 @@ const handleOnPressOut = () => {
         <>
         <Camera style={{ flex: 1 }} type={type} ref={ref => { this.camera = ref; }}>
       </Camera>
-      {!checkVid ? 
+      
+      
+      {//!checkVid ? 
       <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'9%',left:'42.5%'}} onPress={ async () =>  this.snap()}>
          <Image source={require("./images/cam.png")} style={{ width: 55, height: 55 , borderRadius:100}} onPress={ async () =>  this.snap()}/>
       </TouchableOpacity>
-         : 
+         /*: 
          <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'9%',left:'42.5%'}} onPressIn={starVideo} onPressOut = {stopVideo}>
          <Image source={require("./images/vid.jpeg")} style={{ width: 55, height: 55 ,  borderRadius:100}} />
       </TouchableOpacity>  
-      }
+      */}
 
       <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'9%',left:'75%'}} onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}> 
     {isFetching ?  <ActivityIndicator color="#0f0"></ActivityIndicator> :
          <Image source={require("./images/chat.png")} style={{ width: 55, height: 55 ,  borderRadius:100}} />}
       </TouchableOpacity> 
 
-      <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'9%',left:'10%'}} onPress={() => {setType(type === Camera.Constants.Type.back? Camera.Constants.Type.front: Camera.Constants.Type.back);}}> 
+     <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'9%',left:'10%'}} onPress={() => {setType(type === Camera.Constants.Type.back? Camera.Constants.Type.front: Camera.Constants.Type.back);}}> 
     {isFetching ?  <ActivityIndicator color="#0f0"></ActivityIndicator> :
          <Image source={require("./images/flipcamera.png")} style={{ width: 55, height: 55 ,  borderRadius:100}} />}
-      </TouchableOpacity> 
+    </TouchableOpacity> 
 
       
-      <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'87.5%',left:'45%'}} onPress={() => checksetVid(!checkVid)}> 
+      {/*<TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'87.5%',left:'45%'}} onPress={() => checksetVid(!checkVid)}> 
     {isFetching ?  <ActivityIndicator color="#0f0"></ActivityIndicator> :
          <Icon name="ios-refresh-circle" color="#ccc" size={50}/>}
       </TouchableOpacity> 
-
+    */}
 
 
 
@@ -580,7 +498,7 @@ const handleOnPressOut = () => {
          onPress = {() =>  this.getCameraPic()}
        />}
 
-      </TouchableOpacity>
+    </TouchableOpacity> 
 
         </>  
       ) }
@@ -628,7 +546,7 @@ const styles = StyleSheet.create({
     //justifyContent: 'center', 
     //alignItems: 'flex-start',
     //top: '195%',
-    alignSelf:'flex-end'
+    //alignSelf:'flex-end'
    //marginRight:'5%',
 
   },
