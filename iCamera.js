@@ -65,10 +65,8 @@ export const XCamera =({navigation}) => {
   const [objectsInPic,SetObjectsInPhoto] = useState("");
   const [isPictureFetching, setIsPictureFetching] = useState(false);
   const [picStr,setPicStr] = useState("");
-  const [textInPic,setTextinPic] = useState("");
   const [Load,SetLoad] = useState(false);
   const [vid,setVid] = useState(null);
-  const [checkVid,checksetVid] = useState(null);
 
 
 
@@ -376,6 +374,10 @@ const handleOnPressOut = () => {
   }
  
   */
+ changeScreenBack = async () =>{
+  SetObjectsInPhoto("");
+  setPhoto("");
+ }
   return (
     
       
@@ -401,7 +403,7 @@ const handleOnPressOut = () => {
           </ActionButton.Item>
 
           <ActionButton.Item buttonColor='#5f6702' title="Back to Home Screen"onPress={()=>this.findText()} >
-            <Icon name="ios-book" onPress={()=>setPhoto("")}/>
+            <Icon name="ios-book" onPress={()=>this.changeScreenBack()}/>
           </ActionButton.Item>
           </ActionButton>
           
