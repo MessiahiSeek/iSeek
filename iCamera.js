@@ -16,6 +16,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { Video } from 'expo-av';
 import { settingspage } from './settingspage.js';
 import { message } from './message.js';
+import { streamingPage } from './streaming.js';
 import { Container } from 'semantic-ui-react';
 import { DrawerActions } from '@react-navigation/native';
 
@@ -89,7 +90,15 @@ export const XCamera =({navigation}) => {
     })();
   }, []);
 
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      SetObjectsInPhoto("");
+      setPhoto("");
+    });
 
+    // Return the function to unsubscribe from the event so it gets removed on unmount
+    return unsubscribe;
+  }, [navigation]);
   snap = async () => {
     console.log("reached")
     if (this.camera) {
@@ -176,7 +185,9 @@ const getTranscription = async () => {
       var body = new FormData();
       body.append('file',file);
       
-      const response = await fetch('http://iseek.cs.messiah.edu:5000/recording'/*'http://ec2-3-23-33-73.us-east-2.compute.amazonaws.com:5000/recording''http://153.42.129.91:5000/recording'*/, {
+      const response = await fetch(/*'http://iseek.cs.messiah.edu:5000/recording'
+      'http://ec2-3-23-33-73.us-east-2.compute.amazonaws.com:5000/recording'*/
+      'http://153.42.129.91:5000/recording', {
           method: 'POST',
           body: body
       });
@@ -185,9 +196,13 @@ const getTranscription = async () => {
       switch(data.textResponse){
         case ("%0oc"):
           navigation.navigate('Camera');
+          changeScreenBack();
           break; 
         case("%0om"):
           navigation.navigate('Messenger');
+          break;
+        case("%0st"):
+          navigation.navigate('BETA Streaming')  ;
           break;
         case("%0tp"):
           console.log("her")
@@ -205,8 +220,8 @@ const getTranscription = async () => {
                    setIsPictureFetching(true);
                     setPicStr(photo.base64);
                     console.log(photo.base64)
-                   fetch('http://iseek.cs.messiah.edu:5000/image',{
-                   //fetch('http://153.42.129.91:5000/image',{
+                   //fetch('http://iseek.cs.messiah.edu:5000/image',{
+                   fetch('http://153.42.129.91:5000/image',{
                      method: 'POST',
                      headers:{
                        Accept: 'application/json',
@@ -227,17 +242,35 @@ const getTranscription = async () => {
            snap2();
           console.log("herer")
           break;
-        case("%0ri"):
-        if(objectsInPic === ""){
-          Alert.alert("You must take a picture first")
-        }
-        else{
-          ListObjects();
-          
-        }break;
-      default:
-        Speech.speak(data.textResponse);
-        break;
+          case("%0ri"):
+            if(objectsInPic === "" && picStr === ""){
+              Alert.alert("You must take a picture first")
+              Speech.speak("You must take a picture first")
+            }
+            else{
+              ListObjects();
+            }
+            break;
+          case("%0sp"):
+            if(photoJson !== "" || picStr !== "" ){
+              SavePicture();
+            }else{
+              Alert.alert("You must take a picture first")
+              Speech.speak("You must take a picture first")
+            }
+            break;
+          case("%1si"):
+            if(objectsInPic === "" && picStr === ""){
+              Alert.alert("You must take a picture first")
+              Speech.speak("You must take a picture first")
+            }
+            else{
+              ListObjects();
+            }
+            break;
+          default:
+            Speech.speak(data.textResponse);
+            break;
       }
   } catch(error) {
       console.log('There was an error reading file', error);
@@ -377,7 +410,10 @@ const handleOnPressOut = () => {
  changeScreenBack = async () =>{
   SetObjectsInPhoto("");
   setPhoto("");
+  setPhoto("");
  }
+
+ //this.changeScreenBack(); 
   return (
     
       
@@ -507,8 +543,7 @@ const handleOnPressOut = () => {
     </View>
    ); 
   }
-          
-        
+                 
       
 const styles = StyleSheet.create({
   container_nik: {

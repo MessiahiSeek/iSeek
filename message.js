@@ -68,11 +68,15 @@ export const message =({navigation}) => {
         break;
       case("%0tp"):
         navigation.navigate('Camera');
-        XCamera.snap();
+        //XCamera.snap();
         break;
-      case("%0ri"):
-        XCamera.findText();
+      case("%0st"):
+        navigation.navigate('BETA Streaming')  ;
         break;
+      case("%1si"):
+      case("%0ri"):  
+      case("%0sp"):
+      json.textResponse == "This cannot be preformed on this screen."
     default:
         if(json.textResponse.startsWith('%',0)){
           Alert.alert("Sorry this is not supported on this page");

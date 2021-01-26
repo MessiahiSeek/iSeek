@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ActivityIndicator, Text, View, ScrollView, StyleSheet, Vibration, Platform,TouchableOpacity , Image} from 'react-native';
 import Constants from 'expo-constants';
+import * as Speech from 'expo-speech';
 import {
   Button,
   Paragraph,
@@ -135,7 +136,7 @@ const getPrediction = async(tensor) => {
       console.log(inputVal);
       Vibration.vibrate();
     }
-    if(prediction[0].probability > 0.4) {
+    if(prediction[0].probability > 0.6) {
       setPrediction(prediction[0].className)
       cancelAnimationFrame(requestAnimationFrameId);
       setPredictionFound(true);
@@ -217,14 +218,23 @@ const renderCameraView = () => {
           case("%0om"):
             navigation.navigate('Messenger');
             break;
+            case("%0st"):
+          
+            break;
           case("%0tp"):
             console.log("her")
             navigation.navigate('Camera');
             console.log("herer")
             break;
+          case("%1si"):
           case("%0ri"):
+          if(prediction === 'N/A'){
+            Speech.speak("We cannot determine  the object in the screen.")
+          }
+          else{
             Speech.speak("The Object Currently Shown is " + prediction);
-            break;
+          }
+          break;
         default:
           Speech.speak(data.textResponse);
         }
