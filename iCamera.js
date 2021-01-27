@@ -1,6 +1,5 @@
 import React, { useState, useEffect, Component  } from 'react';
 import { Button, Text, View, TouchableOpacity, ref, StyleSheet, ActivityIndicator, Image, ImageBackground , Alert } from 'react-native';
-//import {  Button, ButtonGroup,/* Icon*/ Layout, Spinner } from '@ui-kitten/components';
 import { Camera } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
 import { Audio } from 'expo-av';
