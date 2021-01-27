@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ActivityIndicator, Text, View, ScrollView, StyleSheet, Vibration, Platform,TouchableOpacity , Image} from 'react-native';
+import { ActivityIndicator, Text, View, ScrollView, StyleSheet, Vibration, Platform,TouchableOpacity , Image, Alert} from 'react-native';
 import Constants from 'expo-constants';
 import * as Speech from 'expo-speech';
 import {
@@ -33,7 +33,7 @@ export const streamingPage = ({navigation}) => {
 
 
     //for text input boxes
-    const [inputVal, setInputVal] = useState("laptop");
+    const [inputVal, setInputVal] = useState("lol");
     const [isDialogVisible, setIsDialogVisible] = useState(false);
 
     //Tensorflow and Permissions
@@ -125,7 +125,9 @@ const getPrediction = async(tensor) => {
 
     //topk set to 1
     const prediction = await mobilenetModel.classify(tensor, 1);
-    console.log(`prediction: ${JSON.stringify(prediction)}`);
+    
+    //console.log(`prediction: ${JSON.stringify(prediction)}`);
+    
     //console.log(prediction[0].className);
 
     if(!prediction || prediction.length === 0) { return; }
@@ -205,7 +207,7 @@ const renderCameraView = () => {
         var body = new FormData();
         body.append('file',file);
         
-        const response = await fetch('http://ec2-3-23-33-73.us-east-2.compute.amazonaws.com:5000/recording', {
+        const response = await fetch('http://iseek.cs.messiah.edu:5000/recording', {
             method: 'POST',
             body: body
         });
@@ -254,9 +256,10 @@ const renderCameraView = () => {
     </View>
   }
   const checkForAvailability = async () =>{
-    console.log(inputVal)
+    
+    console.log(inputVal);
     //fetch('http://ec2-3-23-33-73.us-east-2.compute.amazonaws.com:5000/streamingCheck',
-    await fetch('http:192.168.1.5:5000/streamingCheck',
+    await fetch('http://153.42.129.91:5000/streamingCheck'/*'http://iseek.cs.messiah.edu:5000/streamingCheck'*/,
            {
              method: 'POST',
              headers:{
@@ -268,14 +271,30 @@ const renderCameraView = () => {
              }),
            }).then((response) => response.json())
            .then((json) => {
-             
-             if(json.objectAvailability == "True"){
-               console.log("Here")
-               setInputVal(json.objectChoice)
+             console.log("HI");
+             if(json.objectAvailability){
+
+              if(json.yesNoNeeded){
+                /*JOE*/
+                console.log("yes No needed")
+                console.log(json.objectChoice)
+                //YES NO NEEDED HERE
+
+              }
+              else{
+
+              
+                console.log("Here")
+                console.log(json.objectChoice)
+                setInputVal(json.objectChoice)
+
+              }
+
              }else{
                setIsDialogVisible(true);
-               setPopUpTitle("We currently dont support that object, try again.")
+               Alert.alert("We currently dont support this object");
              }
+
             })
     }
   
@@ -294,7 +313,7 @@ const renderCameraView = () => {
             <Dialog.Content>
               <TextInput
                 value={inputVal}
-                onEndEditing={text => setInputVal(text)}
+                onChangeText={inputVal => setInputVal(inputVal)}
               />
               </Dialog.Content>
               <Dialog.Actions>
