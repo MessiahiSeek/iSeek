@@ -281,6 +281,7 @@ const renderCameraView = () => {
             console.log("yes No needed")
             console.log(data.objectChoice)
             //YES NO NEEDED HERE
+            //if yes- pop up saying is this okay, if they click no ask them  to type again
 
           }
           else{
