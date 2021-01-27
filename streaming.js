@@ -238,7 +238,7 @@ const renderCameraView = () => {
         var body = new FormData();
         body.append('file',file);
         
-        const response = await fetch(/*'http://iseek.cs.messiah.edu:5000/voiceStreamingCheck'*/'http://153.42.129.91:5000/voiceStreamingCheck', {
+        const response = await fetch('http://iseek.cs.messiah.edu:5000/voiceStreamingCheck'/*'http://153.42.129.91:5000/voiceStreamingCheck'*/, {
             method: 'POST',
             body: body
         });
