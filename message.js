@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
+import { Alert } from 'react-native';
 import { GiftedChat, SystemMessage } from 'react-native-gifted-chat';
 import { XCamera } from './iCamera.js';
 import { settingspage } from './settingspage.js';
@@ -67,12 +68,20 @@ export const message =({navigation}) => {
         break;
       case("%0tp"):
         navigation.navigate('Camera');
-        XCamera.snap();
+        //XCamera.snap();
         break;
-      case("%0ri"):
-        XCamera.findText();
+      case("%0st"):
+        navigation.navigate('BETA Streaming')  ;
         break;
+      case("%1si"):
+      case("%0ri"):  
+      case("%0sp"):
+      json.textResponse == "This cannot be preformed on this screen."
     default:
+        if(json.textResponse.startsWith('%',0)){
+          Alert.alert("Sorry this is not supported on this page");
+        }
+      else{
       setMessages(previousMessages => GiftedChat.append(previousMessages,{
         _id: 3,
         text: json.textResponse,
@@ -84,6 +93,7 @@ export const message =({navigation}) => {
         }
       } 
       ));
+    }
       break;
     }
   })
