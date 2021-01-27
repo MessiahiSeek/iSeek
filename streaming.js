@@ -10,6 +10,8 @@ import {
   Provider,
   TextInput,
 } from 'react-native-paper';
+import { Audio } from 'expo-av';
+import * as FileSystem from 'expo-file-system';
 
 //Permissions
 import * as Permissions from 'expo-permissions';
@@ -30,6 +32,8 @@ export const streamingPage = ({navigation}) => {
     const [predictionFound, setPredictionFound] = useState(false);
     const [hasPermission, setHasPermission] = useState(null);
     const [isFetching, setIsFetching] = useState(false);
+    const [isRecording, setIsRecording] = useState(false);
+    const [recording, setRecording] = useState(null);
 
 
     //for text input boxes
@@ -45,6 +49,33 @@ export const streamingPage = ({navigation}) => {
 
     const TensorCamera = cameraWithTensors(Camera);
     let requestAnimationFrameId = 0;
+
+
+
+
+
+
+    const recordingOptions = {
+      // android not currently in use, but parameters are required
+      android: {
+          extension: '.m4a',
+          outputFormat: Audio.RECORDING_OPTION_ANDROID_OUTPUT_FORMAT_MPEG_4,
+          audioEncoder: Audio.RECORDING_OPTION_ANDROID_AUDIO_ENCODER_AAC,
+          sampleRate: 44100,
+          numberOfChannels: 2,
+          bitRate: 128000,
+      },
+      ios: {
+          extension: '.wav',
+          audioQuality: Audio.RECORDING_OPTION_IOS_AUDIO_QUALITY_HIGH,
+          sampleRate: 44100,
+          numberOfChannels: 1,
+          bitRate: 128000,
+          linearPCMBitDepth: 16,
+          linearPCMIsBigEndian: false,
+          linearPCMIsFloat: false,
+      },
+    };
 
 
       //performance hacks (Platform dependent)
@@ -207,12 +238,13 @@ const renderCameraView = () => {
         var body = new FormData();
         body.append('file',file);
         
-        const response = await fetch('http://iseek.cs.messiah.edu:5000/recording', {
+        const response = await fetch(/*'http://iseek.cs.messiah.edu:5000/voiceStreamingCheck'*/'http://153.42.129.91:5000/voiceStreamingCheck', {
             method: 'POST',
             body: body
         });
         const data = await response.json();
-       //Speech.speak("You said " + data.voiceResponse);
+        console.log(data)
+        if(data.amazonNeeded){
         switch(data.textResponse){
           case ("%0oc"):
             navigation.navigate('Camera');
@@ -240,13 +272,77 @@ const renderCameraView = () => {
         default:
           Speech.speak(data.textResponse);
         }
+      }
+      else{
+        if(data.objectAvailability){
+
+          if(data.yesNoNeeded){
+            /*JOE*/
+            console.log("yes No needed")
+            console.log(data.objectChoice)
+            //YES NO NEEDED HERE
+
+          }
+          else{
+
+          
+            console.log("Here")
+            console.log(data.objectChoice)
+            setInputVal(data.objectChoice)
+
+          }
+
+         }else{
+           Alert.alert("We currently dont support this object");
+         }
+
+      }
     } catch(error) {
         console.log('There was an error reading file', error);
+        Alert.alert("Error, please try again")
         stopRecording();
         // resetRecording();
     }
+  
     setIsFetching(false);
   }
+
+
+  startRecording = async () => {
+    const { status } = await Permissions.askAsync(Permissions.AUDIO_RECORDING);
+    setHasPermission(status === 'granted');
+    if (status !== 'granted') return;
+    setIsRecording(true);
+    // some of these are not applicable, but are required
+    await Audio.setAudioModeAsync({
+      allowsRecordingIOS: true,
+      interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
+      playsInSilentModeIOS: true,
+      shouldDuckAndroid: true,
+      interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
+      playThroughEarpieceAndroid: true,
+  
+    });
+    const recording = new Audio.Recording();
+    try {
+      await recording.prepareToRecordAsync(recordingOptions);
+      await recording.startAsync();
+    } catch (error) {
+      console.log(error);
+      stopRecording();
+    }
+    setRecording(recording);
+  }
+
+  const stopRecording = async () => {
+    setIsRecording(false);
+    try {
+        await recording.stopAndUnloadAsync();
+    } catch (error) {
+        // Do nothing -- we are already unloaded.
+    }
+}
+
   const renderChatButton = () => {
     return <View>
       <TouchableOpacity /*style = {{position: 'absolute', borderRadius:"100%",bottom:'9%',left:'75%'}}*/ onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}> 
