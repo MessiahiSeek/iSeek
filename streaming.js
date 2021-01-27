@@ -259,7 +259,7 @@ const renderCameraView = () => {
     
     console.log(inputVal);
     //fetch('http://ec2-3-23-33-73.us-east-2.compute.amazonaws.com:5000/streamingCheck',
-    await fetch('http://153.42.129.91:5000/streamingCheck'/*'http://iseek.cs.messiah.edu:5000/streamingCheck'*/,
+    await fetch(/*'http://153.42.129.91:5000/streamingCheck'*/'http://iseek.cs.messiah.edu:5000/streamingCheck',
            {
              method: 'POST',
              headers:{

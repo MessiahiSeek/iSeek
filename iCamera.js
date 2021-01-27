@@ -185,9 +185,9 @@ const getTranscription = async () => {
       var body = new FormData();
       body.append('file',file);
       
-      const response = await fetch(/*'http://iseek.cs.messiah.edu:5000/recording'
-      'http://ec2-3-23-33-73.us-east-2.compute.amazonaws.com:5000/recording'*/
-      'http://153.42.129.91:5000/recording', {
+      const response = await fetch('http://iseek.cs.messiah.edu:5000/recording'
+      /*'http://ec2-3-23-33-73.us-east-2.compute.amazonaws.com:5000/recording'*/
+      /*'http://153.42.129.91:5000/recording'*/, {
           method: 'POST',
           body: body
       });
@@ -220,8 +220,8 @@ const getTranscription = async () => {
                    setIsPictureFetching(true);
                     setPicStr(photo.base64);
                     console.log(photo.base64)
-                   //fetch('http://iseek.cs.messiah.edu:5000/image',{
-                   fetch('http://153.42.129.91:5000/image',{
+                   fetch('http://iseek.cs.messiah.edu:5000/image',{
+                   //fetch('http://153.42.129.91:5000/image',{
                      method: 'POST',
                      headers:{
                        Accept: 'application/json',
