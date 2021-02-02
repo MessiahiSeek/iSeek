@@ -1,10 +1,19 @@
 # iSeek 
 
+### What is iSeek?
+iSeek is an app designed to assist the visually impaired with finding items
 
-### iSeek is an app designed to assist the blind, it provides  the following  functionality 
-1. Object detection 
-2. Chatbot for assistance
-3. Ability to read signs 
+### How do I use iSeek??
+As simple as opening the app and pointing the camera!
+
+### Features
+- Object Detection
+- Message page
+- Dark Mode
+- Photo Library 
+- Live Streaming
+- Chatbot Services
+- voice recognition
 
 
 ### To run the application locally
