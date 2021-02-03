@@ -8,12 +8,19 @@ As simple as opening the app and pointing the camera!
 
 ### Features
 - Object Detection
-- Message page
+    - Snap a photo and get decriptions of objects in the room!
+- Message Page
+
 - Dark Mode
-- Photo Library 
+    - Ability to change the color scheme from light to dark!
+- Photo Library
+    - use iSeek to sort through existing photos 
 - Live Streaming
+    - Livestream will allow iSeek to 
 - Chatbot Services
-- voice recognition
+    - Talk to our automated chatbot for real-time responses for assistance with the app!
+- Voice Recognition
+    - Ability to talk into your phone and 
 
 
 ### To run the application locally
