@@ -6,8 +6,8 @@ iSeek is an app designed to assist the visually impaired with finding items
 ### How do I use iSeek??
 As simple as opening the app and pointing the camera!
 
-### Features
-# Object Detection
+# Features
+### Object Detection
     - Snap a photo and get decriptions of objects in the room!
 - Message Page
 
