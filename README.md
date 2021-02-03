@@ -21,7 +21,7 @@ As simple as opening the app and taking a photo!
 - Ability to change the color scheme from light to dark!
 
 
-# To run the application locally
+## To run the application locally
 1. Download the expo app on your mobile device
 2. Install npm via [this link](https://www.npmjs.com/get-npm)
 3. Run the following commands:
@@ -41,7 +41,7 @@ expo start
 
 ## Need Help?
 - Contact us: 
-<lm1374@messiah.edu>
-<nm1287@messiah.edu>
-<jk1551@messiah.edu>
-<sg1355@messiah.edu>
+<lm1374@messiah.edu>  
+<nm1287@messiah.edu>  
+<jk1551@messiah.edu>  
+<sg1355@messiah.edu>  
