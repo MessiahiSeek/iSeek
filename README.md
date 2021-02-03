@@ -8,22 +8,21 @@ As simple as opening the app and pointing the camera!
 
 # Features
 ### Object Detection
-    - Snap a photo and get decriptions of objects in the room!
-- Message Page
+- Snap a photo and get decriptions of objects in the room!
 
-- Dark Mode
-    - Ability to change the color scheme from light to dark!
-- Photo Library
-    - use iSeek to sort through existing photos 
-- Live Streaming
-    - Livestream will allow iSeek to 
-- Chatbot Services
-    - Talk to our automated chatbot for real-time responses for assistance with the app!
-- Voice Recognition
-    - Ability to talk into your phone and 
+### Dark Mode
+- Ability to change the color scheme from light to dark!
+### Photo Library
+- use iSeek to sort through existing photos 
+## Live Streaming
+- Livestream will allow iSeek to 
+### Chatbot Services
+- Talk to our automated chatbot for real-time responses for assistance with the app!
+### Voice Recognition
+- Ability to talk into your phone and 
 
 
-### To run the application locally
+# To run the application locally
 1. Download the expo app on your mobile device
 2. Install npm via [this link](https://www.npmjs.com/get-npm)
 3. Run the following commands:
@@ -40,3 +39,6 @@ npm install expo-cli
 expo start
 ```
 4. Scan the QR code with the camera app for iPhone or the expo app for Android.
+
+# Need Help?
+- Contact us: <lm1374@messiah.edu>
