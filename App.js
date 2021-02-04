@@ -17,6 +17,7 @@ import Sidebar from './customDrawer.js';
 import { PropsService } from '@ui-kitten/components/devsupport';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 
+
 const Drawer = createDrawerNavigator();
 function HomeScreen({navigation}) {
   const {colors} = useTheme();
@@ -82,7 +83,7 @@ const AppDrawer = () => {
       component={streamingPage}
       options={{
         drawerIcon: ({focused, color, size}) => (
-          <Icon name="ios-camera" style={{fontSize: size, color: color}} />
+          <Icon name="ios-videocam" style={{fontSize: size, color: color}} />
         ),
       }}
       />
