@@ -60,7 +60,7 @@ export const XCamera =({navigation}) => {
   const [recording, setRecording] = useState(null);
   //const useRef = useRef(null);
   const [photoJson,setPhoto] = useState("");
-  const [objectsInPic,SetObjectsInPhoto] = useState("");
+  const [objectsInPic,SetObjectsInPhoto] = useState([]);
   const [isPictureFetching, setIsPictureFetching] = useState(false);
   const [picStr,setPicStr] = useState("");
   const [Load,SetLoad] = useState(false);
@@ -123,6 +123,7 @@ export const XCamera =({navigation}) => {
            .then((json) => {
              setPhoto(json.pictureResponse);
              SetObjectsInPhoto(json.objects);
+             console.log(json.objects);
              setIsPictureFetching(false);
             })
          });
@@ -300,16 +301,22 @@ const handleOnPressOut = () => {
     await MediaLibrary.saveToLibraryAsync(filename);
   }
   ListObjects = async () => {
-    let obj = objectsInPic.split('\n');
-    Speech.speak("The Objects in this picture are:");
-    for(i = 0; i < obj.length; i++){
-      if (obj[i+1] === "" ){
-        Speech.speak("and " +obj[i]);
+    //et obj = objectsInPic.split('\n');
+    Speech.speak("The Objects in this picture are: ");
+    if (objectsInPic.length === 1){
+      Speech.speak("The object in this picture " + objectsInPic[0]);
+      return;
+    }
+    else{
+    for(i = 0; i < objectsInPic.length ; i++){
+      if (i ===  objectsInPic.length - 1 ){
+        Speech.speak("and " + objectsInPic[i]);
         return;
       }
       else{
-      Speech.speak(obj[i]);
+       Speech.speak(objectsInPic[i]);
     }
+  }
   }
   }/*
   findText = async () => {
@@ -502,7 +509,7 @@ const handleOnPressOut = () => {
       </TouchableOpacity>
         }
 
-
+<TouchableOpacity style = {{position: 'absolute', borderRadius:"100%",bottom:'2%',left:'80%'}} onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}>
     {isFetching ?  <ActivityIndicator color="#0f0"></ActivityIndicator> :
          <Image source={require("./images/chat.png")} style={{ width: 55, height: 55 ,  borderRadius:100}} />}
       </TouchableOpacity> 
