@@ -406,7 +406,7 @@ const renderCameraView = () => {
       <Portal >
         <Dialog visible={isDialogVisible}
             onDismiss={() => setIsDialogVisible(false)}
-            style = {{position:'absolute',width:300,bottom:300 }}
+            style = {{position:'absolute', width:300, bottom:400 }}
             >
               <Dialog.Title>{popUpTitle}</Dialog.Title>
             <Dialog.Content>
