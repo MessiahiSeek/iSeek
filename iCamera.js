@@ -106,9 +106,7 @@ export const XCamera =({navigation}) => {
         //const photo = await this.camera.takePictureAsync();
         await this.camera.takePictureAsync(options).then(photo => {
           setIsPictureFetching(true);
-           //photo.exif.Orientation = 1;            
             setPicStr(photo.base64);
-            //console.log(photo.base64)
            fetch('http://iseek.cs.messiah.edu:5000/image',{
            //fetch('http://153.42.129.91:5000/image',{
              method: 'POST',
@@ -212,9 +210,7 @@ const getTranscription = async () => {
               //
               const options = { quality: .1, base64: true, fixOrientation: true, 
                 exif: true};
-                //const photo = await this.camera.takePictureAsync();
                 await this.camera.takePictureAsync(options).then(photo => {
-                   //photo.exif.Orientation = 1;            
                    setIsPictureFetching(true);
                     setPicStr(photo.base64);
                     console.log(photo.base64)
@@ -318,35 +314,8 @@ const handleOnPressOut = () => {
     }
   }
   }
-  }/*
-  findText = async () => {
-    SetLoad(true);
-     fetch('http://ec2-3-23-33-73.us-east-2.compute.amazonaws.com:5000/text',
-           {
-             method: 'POST',
-             headers:{
-               Accept: 'application/json',
-               'Content-Type': 'application/json',
-             },
-             body: JSON.stringify({
-               pictureString: picStr,
-             }),
-           }).then((response) => response.json())
-           .then((json) => {
-            console.log(json.imageText);
-             setTextinPic(json.imageText);
-             SetLoad(false);
-           if (textInPic === null){
-            Speech.speak("There is no text in this picture.");
-           }
-           else{
-           Speech.speak("The text in this picture is ");
-           Speech.speak(json.imageText);
-           }
-          }
-           )
-           
-  }*/
+  }
+        
 
   getCameraPic = async () =>{
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -378,39 +347,7 @@ const handleOnPressOut = () => {
             })
     }
   }
-  /*
-  starVideo = async () =>
-  {
-      console.log("world")
-      
-      const options = { quality: Camera.Constants.VideoQuality[2160], mute:true}
-      const video = await this.camera.recordAsync(options);
-      setIsPictureFetching(true);
-
-      MediaLibrary.saveToLibraryAsync(video.uri);
-      const fileUri = video.uri;
-      var file = {
-        uri: fileUri,
-        name: 'video.mov'
-      }
-      var body = new FormData();
-      body.append('file',file);
-      fetch('http://ec2-3-23-33-73.us-east-2.compute.amazonaws.com:5000/video', {
-          method: 'POST',
-          body: body
-      }).then((response) => response.json())
-      .then((json) => {
-        setVid(json.vidResponse);
-        setIsPictureFetching(false);
-       })
-  } 
-
-  stopVideo = async () =>
-  {
-      this.camera.stopRecording();
-  }
- 
-  */
+  
  changeScreenBack = async () =>{
   SetObjectsInPhoto("");
   setPhoto("");
