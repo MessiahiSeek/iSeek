@@ -310,7 +310,7 @@ const renderCameraView = () => {
       <View style={styles.cameraView}>
         { renderCameraView() }
       </View>
-      <Text style={styles.legendTextField}>  Prediction: {prediction}</Text>
+      <Text style={styles.legendTextField}>  prediction: {prediction}</Text>
       <View style={styles.body}>
       </View>  
         <View style={styles.submitButton} >{ renderTextInput() }</View>
