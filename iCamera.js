@@ -1,6 +1,5 @@
 import React, { useState, useEffect, Component  } from 'react';
 import { Button, Text, View, TouchableOpacity, ref, StyleSheet, ActivityIndicator, Image, ImageBackground , Alert } from 'react-native';
-//import {  Button, ButtonGroup,/* Icon*/ Layout, Spinner } from '@ui-kitten/components';
 import { Camera } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
 import { Audio } from 'expo-av';
@@ -14,6 +13,7 @@ import { YellowBox } from 'react-native'
 import * as ImagePicker from 'expo-image-picker';
 import { Video } from 'expo-av';
 import { message } from './message.js';
+import { streamingPage } from './streaming.js';
 import { Container } from 'semantic-ui-react';
 import { DrawerActions } from '@react-navigation/native';
 
@@ -63,10 +63,8 @@ export const XCamera =({navigation}) => {
   const [objectsInPic,SetObjectsInPhoto] = useState("");
   const [isPictureFetching, setIsPictureFetching] = useState(false);
   const [picStr,setPicStr] = useState("");
-  const [textInPic,setTextinPic] = useState("");
   const [Load,SetLoad] = useState(false);
   const [vid,setVid] = useState(null);
-  const [checkVid,checksetVid] = useState(null);
 
 
 
@@ -89,7 +87,15 @@ export const XCamera =({navigation}) => {
     })();
   }, []);
 
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      SetObjectsInPhoto("");
+      setPhoto("");
+    });
 
+    // Return the function to unsubscribe from the event so it gets removed on unmount
+    return unsubscribe;
+  }, [navigation]);
   snap = async () => {
     console.log("reached")
     if (this.camera) {
@@ -103,8 +109,8 @@ export const XCamera =({navigation}) => {
            //photo.exif.Orientation = 1;            
             setPicStr(photo.base64);
             //console.log(photo.base64)
-           //fetch('http://ec2-3-23-33-73.us-east-2.compute.amazonaws.com:5000/image',
-           fetch('http://153.42.129.91:5000/image',{
+           fetch('http://iseek.cs.messiah.edu:5000/image',{
+           //fetch('http://153.42.129.91:5000/image',{
              method: 'POST',
              headers:{
                Accept: 'application/json',
@@ -176,7 +182,9 @@ const getTranscription = async () => {
       var body = new FormData();
       body.append('file',file);
       
-      const response = await fetch(/*'http://ec2-3-23-33-73.us-east-2.compute.amazonaws.com:5000/recording'*/'http://153.42.129.91:5000/recording', {
+      const response = await fetch('http://iseek.cs.messiah.edu:5000/recording'
+      /*'http://ec2-3-23-33-73.us-east-2.compute.amazonaws.com:5000/recording'*/
+      /*'http://153.42.129.91:5000/recording'*/, {
           method: 'POST',
           body: body
       });
@@ -185,9 +193,13 @@ const getTranscription = async () => {
       switch(data.textResponse){
         case ("%0oc"):
           navigation.navigate('Camera');
+          changeScreenBack();
           break; 
         case("%0om"):
           navigation.navigate('Messenger');
+          break;
+        case("%0st"):
+          navigation.navigate('BETA Streaming')  ;
           break;
         case("%0tp"):
           console.log("her")
@@ -205,8 +217,8 @@ const getTranscription = async () => {
                    setIsPictureFetching(true);
                     setPicStr(photo.base64);
                     console.log(photo.base64)
-                   //fetch('http://ec2-3-23-33-73.us-east-2.compute.amazonaws.com:5000/image',
-                   fetch('http://153.42.129.91:5000/image',{
+                   fetch('http://iseek.cs.messiah.edu:5000/image',{
+                   //fetch('http://153.42.129.91:5000/image',{
                      method: 'POST',
                      headers:{
                        Accept: 'application/json',
@@ -223,23 +235,43 @@ const getTranscription = async () => {
                     })
                  });
              }  
-             
            }
            snap2();
-          
           console.log("herer")
           break;
-
-        case("%0ri"):
-          ListObjects();
-          break;
-      default:
-        Speech.speak(data.textResponse);
+          case("%0ri"):
+            if(objectsInPic === "" && picStr === ""){
+              Alert.alert("You must take a picture first")
+              Speech.speak("You must take a picture first")
+            }
+            else{
+              ListObjects();
+            }
+            break;
+          case("%0sp"):
+            if(photoJson !== "" || picStr !== "" ){
+              SavePicture();
+            }else{
+              Alert.alert("You must take a picture first")
+              Speech.speak("You must take a picture first")
+            }
+            break;
+          case("%1si"):
+            if(objectsInPic === "" && picStr === ""){
+              Alert.alert("You must take a picture first")
+              Speech.speak("You must take a picture first")
+            }
+            else{
+              ListObjects();
+            }
+            break;
+          default:
+            Speech.speak(data.textResponse);
+            break;
       }
   } catch(error) {
       console.log('There was an error reading file', error);
       stopRecording();
-      // resetRecording();
   }
   setIsFetching(false);
 }
@@ -279,7 +311,7 @@ const handleOnPressOut = () => {
       Speech.speak(obj[i]);
     }
   }
-  }
+  }/*
   findText = async () => {
     SetLoad(true);
      fetch('http://ec2-3-23-33-73.us-east-2.compute.amazonaws.com:5000/text',
@@ -307,7 +339,8 @@ const handleOnPressOut = () => {
           }
            )
            
-  }
+  }*/
+
   getCameraPic = async () =>{
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -319,7 +352,7 @@ const handleOnPressOut = () => {
 
     if (!result.cancelled) {
       setIsPictureFetching(true);
-      fetch('http://ec2-3-23-33-73.us-east-2.compute.amazonaws.com:5000/image',
+      fetch('http://iseek.cs.messiah.edu:5000/image',
       //fetch('153.42.129.91:5000/image',
            {
              method: 'POST',
@@ -338,6 +371,7 @@ const handleOnPressOut = () => {
             })
     }
   }
+  /*
   starVideo = async () =>
   {
       console.log("world")
@@ -369,13 +403,22 @@ const handleOnPressOut = () => {
       this.camera.stopRecording();
   }
  
-  
+  */
+ changeScreenBack = async () =>{
+  SetObjectsInPhoto("");
+  setPhoto("");
+  setPhoto("");
+ }
+
+ //this.changeScreenBack(); 
   return (
     
       
     <View style={styles.container}>
+
       
-        {(photoJson != "" && vid == null && !isPictureFetching)  && (
+      
+        {(photoJson != ""  && !isPictureFetching)  && (
            
            <ImageBackground source ={{ uri:`data:image/jpg;base64,${photoJson}`}} style={{flex:1, height: undefined, width: undefined}}>
             {(Load) && (<ActivityIndicator alignContent="center" size="large" color="#000" 
@@ -391,6 +434,10 @@ const handleOnPressOut = () => {
           <ActionButton.Item buttonColor='#5f6702' title="Save Picture"onPress={()=>this.findText()} >
             <Icon name="ios-book" onPress={()=>this.SavePicture()}/>
           </ActionButton.Item>
+
+          <ActionButton.Item buttonColor='#5f6702' title="Back to Home Screen"onPress={()=>this.findText()} >
+            <Icon name="ios-book" onPress={()=>this.changeScreenBack()}/>
+          </ActionButton.Item>
           </ActionButton>
           
 
@@ -403,9 +450,10 @@ const handleOnPressOut = () => {
           </ImageBackground>
         )}
 
-        {(photoJson == "" && vid != null && !isPictureFetching)  && (
+
+{/*
+        {(photoJson == ""  && !isPictureFetching)  && (
            <>
-         
            <Video
            source={{ vid }}
            rate={1.0}
@@ -414,7 +462,6 @@ const handleOnPressOut = () => {
            resizeMode="cover"
            shouldPlay
            isLooping
-           //style={{ width: 300, height: 300 }}
          />
 
             {(Load) && (
@@ -435,7 +482,7 @@ const handleOnPressOut = () => {
           </>
         )}
 
-          
+            */}
 
       {(isPictureFetching)&&<View style={[styles.container_nik,styles.horizontal]}>
         <ActivityIndicator alignContent="center" size="large" color="#000"></ActivityIndicator>
@@ -451,9 +498,11 @@ const handleOnPressOut = () => {
       {//!checkVid ? 
       <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'2%',left:'42.5%'}} onPress={ async () =>  this.snap()}>
          <Image source={require("./images/cam.png")} style={{ width: 55, height: 55 , borderRadius:100}} onPress={ async () =>  this.snap()}/>
-      </TouchableOpacity>}
 
-      <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'2%',left:'82%'}} onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}> 
+      </TouchableOpacity>
+        }
+
+
     {isFetching ?  <ActivityIndicator color="#0f0"></ActivityIndicator> :
          <Image source={require("./images/chat.png")} style={{ width: 55, height: 55 ,  borderRadius:100}} />}
       </TouchableOpacity> 
@@ -490,8 +539,7 @@ const handleOnPressOut = () => {
     </View>
    ); 
   }
-          
-        
+                 
       
 const styles = StyleSheet.create({
   container_nik: {
