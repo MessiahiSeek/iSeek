@@ -40,7 +40,7 @@ expo start
 4. Scan the QR code with the camera app for iPhone or the expo app for Android.
 
 ## Need Help?
-- Contact us: 
+- Contact us:  
 <lm1374@messiah.edu>  
 <nm1287@messiah.edu>  
 <jk1551@messiah.edu>  

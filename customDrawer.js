@@ -9,7 +9,7 @@ import {
 } from '@react-navigation/drawer';
 import { NavigationContainer, DefaultTheme, DarkTheme, useTheme} from '@react-navigation/native';
 import {Icon, Header, Content, Footer, List, ListItem, Body, Text, Right, Left, Switch, H3, colors, Thumbnail, Button} from 'native-base';
-import Animated from 'react-native-reanimated';
+import Animated, { color } from 'react-native-reanimated';
 import { Container } from 'semantic-ui-react';
 import { View } from '@shoutem/ui';
 import { EventRegister } from 'react-native-event-listeners';
@@ -28,12 +28,13 @@ function Sidebar({progress, ...props}) {
             <Header style={{backgroundColor: colors.card, borderBottomWidth: 0}}>
                 <Right>
                     <Button transparent>
-                        <Icon 
+                        <Icon style=
+                        {{color: colors.text}}
                         name="menu" />
                     </Button>
                 </Right>
             </Header>
-            <Content contentContainerStyle={{flex: 1}}>
+            <Content contentContainerStyle={{flex: 1, backgroundColor:color.card}}>
                 <ListItem thumbnail>
                     <Left>
                         <Thumbnail
