@@ -9,11 +9,9 @@ import { render } from 'react-dom';
 import * as Speech from 'expo-speech';
 import Icon from 'react-native-vector-icons/Ionicons';
 import ActionButton from 'react-native-action-button';
-import { Header, Left } from 'native-base';
 import { YellowBox } from 'react-native'
 import * as ImagePicker from 'expo-image-picker';
 import { Video } from 'expo-av';
-import { settingspage } from './settingspage.js';
 import { message } from './message.js';
 import { streamingPage } from './streaming.js';
 import { Container } from 'semantic-ui-react';
@@ -62,7 +60,7 @@ export const XCamera =({navigation}) => {
   const [recording, setRecording] = useState(null);
   //const useRef = useRef(null);
   const [photoJson,setPhoto] = useState("");
-  const [objectsInPic,SetObjectsInPhoto] = useState("");
+  const [objectsInPic,SetObjectsInPhoto] = useState([]);
   const [isPictureFetching, setIsPictureFetching] = useState(false);
   const [picStr,setPicStr] = useState("");
   const [Load,SetLoad] = useState(false);
@@ -108,9 +106,7 @@ export const XCamera =({navigation}) => {
         //const photo = await this.camera.takePictureAsync();
         await this.camera.takePictureAsync(options).then(photo => {
           setIsPictureFetching(true);
-           //photo.exif.Orientation = 1;            
             setPicStr(photo.base64);
-            //console.log(photo.base64)
            fetch('http://iseek.cs.messiah.edu:5000/image',{
            //fetch('http://153.42.129.91:5000/image',{
              method: 'POST',
@@ -125,6 +121,7 @@ export const XCamera =({navigation}) => {
            .then((json) => {
              setPhoto(json.pictureResponse);
              SetObjectsInPhoto(json.objects);
+             console.log(json.objects);
              setIsPictureFetching(false);
             })
          });
@@ -213,9 +210,7 @@ const getTranscription = async () => {
               //
               const options = { quality: .1, base64: true, fixOrientation: true, 
                 exif: true};
-                //const photo = await this.camera.takePictureAsync();
                 await this.camera.takePictureAsync(options).then(photo => {
-                   //photo.exif.Orientation = 1;            
                    setIsPictureFetching(true);
                     setPicStr(photo.base64);
                     console.log(photo.base64)
@@ -302,46 +297,25 @@ const handleOnPressOut = () => {
     await MediaLibrary.saveToLibraryAsync(filename);
   }
   ListObjects = async () => {
-    let obj = objectsInPic.split('\n');
-    Speech.speak("The Objects in this picture are:");
-    for(i = 0; i < obj.length; i++){
-      if (obj[i+1] === "" ){
-        Speech.speak("and " +obj[i]);
+    //et obj = objectsInPic.split('\n');
+    Speech.speak("The Objects in this picture are: ");
+    if (objectsInPic.length === 1){
+      Speech.speak("The object in this picture " + objectsInPic[0]);
+      return;
+    }
+    else{
+    for(i = 0; i < objectsInPic.length ; i++){
+      if (i ===  objectsInPic.length - 1 ){
+        Speech.speak("and " + objectsInPic[i]);
         return;
       }
       else{
-      Speech.speak(obj[i]);
+       Speech.speak(objectsInPic[i]);
     }
   }
-  }/*
-  findText = async () => {
-    SetLoad(true);
-     fetch('http://ec2-3-23-33-73.us-east-2.compute.amazonaws.com:5000/text',
-           {
-             method: 'POST',
-             headers:{
-               Accept: 'application/json',
-               'Content-Type': 'application/json',
-             },
-             body: JSON.stringify({
-               pictureString: picStr,
-             }),
-           }).then((response) => response.json())
-           .then((json) => {
-            console.log(json.imageText);
-             setTextinPic(json.imageText);
-             SetLoad(false);
-           if (textInPic === null){
-            Speech.speak("There is no text in this picture.");
-           }
-           else{
-           Speech.speak("The text in this picture is ");
-           Speech.speak(json.imageText);
-           }
-          }
-           )
-           
-  }*/
+  }
+  }
+        
 
   getCameraPic = async () =>{
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -373,39 +347,7 @@ const handleOnPressOut = () => {
             })
     }
   }
-  /*
-  starVideo = async () =>
-  {
-      console.log("world")
-      
-      const options = { quality: Camera.Constants.VideoQuality[2160], mute:true}
-      const video = await this.camera.recordAsync(options);
-      setIsPictureFetching(true);
-
-      MediaLibrary.saveToLibraryAsync(video.uri);
-      const fileUri = video.uri;
-      var file = {
-        uri: fileUri,
-        name: 'video.mov'
-      }
-      var body = new FormData();
-      body.append('file',file);
-      fetch('http://ec2-3-23-33-73.us-east-2.compute.amazonaws.com:5000/video', {
-          method: 'POST',
-          body: body
-      }).then((response) => response.json())
-      .then((json) => {
-        setVid(json.vidResponse);
-        setIsPictureFetching(false);
-       })
-  } 
-
-  stopVideo = async () =>
-  {
-      this.camera.stopRecording();
-  }
- 
-  */
+  
  changeScreenBack = async () =>{
   SetObjectsInPhoto("");
   setPhoto("");
@@ -498,23 +440,22 @@ const handleOnPressOut = () => {
       
       
       {//!checkVid ? 
-      <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'9%',left:'42.5%'}} onPress={ async () =>  this.snap()}>
+      <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'2%',left:'42.5%'}} onPress={ async () =>  this.snap()}>
          <Image source={require("./images/cam.png")} style={{ width: 55, height: 55 , borderRadius:100}} onPress={ async () =>  this.snap()}/>
+
       </TouchableOpacity>
         }
 
-      <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'9%',left:'75%'}} onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}> 
+<TouchableOpacity style = {{position: 'absolute', borderRadius:"100%",bottom:'2%',left:'80%'}} onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}>
     {isFetching ?  <ActivityIndicator color="#0f0"></ActivityIndicator> :
          <Image source={require("./images/chat.png")} style={{ width: 55, height: 55 ,  borderRadius:100}} />}
       </TouchableOpacity> 
 
-     <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'9%',left:'10%'}} onPress={() => {setType(type === Camera.Constants.Type.back? Camera.Constants.Type.front: Camera.Constants.Type.back);}}> 
+     <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'2%',left:'3%'}} onPress={() => {setType(type === Camera.Constants.Type.back? Camera.Constants.Type.front: Camera.Constants.Type.back);}}> 
     {isFetching ?  <ActivityIndicator color="#0f0"></ActivityIndicator> :
          <Image source={require("./images/flipcamera.png")} style={{ width: 55, height: 55 ,  borderRadius:100}} />}
     </TouchableOpacity> 
 
-      
-    
       <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'90%',left:'5%'}} onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}> 
     {isFetching ?  <ActivityIndicator color="#0f0"></ActivityIndicator> :
          <Icon

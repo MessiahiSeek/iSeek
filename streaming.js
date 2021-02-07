@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { ActivityIndicator, Text, View, ScrollView, StyleSheet, Vibration, Platform,TouchableOpacity , Image, Alert} from 'react-native';
+import { ActivityIndicator, Text, View, ScrollView, StyleSheet, Vibration, Platform, TouchableOpacity, Image, Modal} from 'react-native';
 import Constants from 'expo-constants';
-import * as Speech from 'expo-speech';
+import Icon from 'react-native-vector-icons/Ionicons';
+import { DrawerActions } from '@react-navigation/native';
 import {
   Button,
   Paragraph,
@@ -309,6 +310,7 @@ const renderCameraView = () => {
   }
 
 
+
   startRecording = async () => {
     const { status } = await Permissions.askAsync(Permissions.AUDIO_RECORDING);
     setHasPermission(status === 'granted');
@@ -399,12 +401,12 @@ const renderCameraView = () => {
     return <Provider>
       <View>
       <TouchableOpacity onPress={() => setIsDialogVisible(true)}>
-      <Image source={require("./images/chat.png")} style={{ width: 55, height: 55 ,  borderRadius:100}} />
+      <Image source={require("./images/binoculars.png")} style={{ width: 55, height: 55 ,  borderRadius:100}} />
       </TouchableOpacity> 
       <Portal >
         <Dialog visible={isDialogVisible}
             onDismiss={() => setIsDialogVisible(false)}
-            style = {{position:'absolute',width:300,bottom:300 }}
+            style = {{position:'absolute', width:300, bottom:400 }}
             >
               <Dialog.Title>{popUpTitle}</Dialog.Title>
             <Dialog.Content>
@@ -419,8 +421,8 @@ const renderCameraView = () => {
                 
                 checkForAvailability();
                 
-                if(popUpTitle !== "What object Are you looking for?"){
-                  setPopUpTitle("What object Are you looking for?")
+                if(popUpTitle !== "What object are you looking for?"){
+                  setPopUpTitle("What object are you looking for?")
                 }
                 }}>Done</Button>
             </Dialog.Actions>
@@ -429,25 +431,31 @@ const renderCameraView = () => {
       </View>
       </Provider>
   }
+
+  const renderMenuButton = () => {
+    return <View>
+    <TouchableOpacity style = {{position: 'absolute', top:'50%',left:'5%'}} onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}> 
+    {isFetching ?  <ActivityIndicator color="#000">
+    </ActivityIndicator> :
+         <Icon
+         name="ios-menu"
+         color="#"
+         size={25}
+         onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
+       />}
+      </TouchableOpacity>
+      </View>
+  }
  
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>
-          Object Detection Streaming
-        </Text>
-      </View>
-      {!isDialogVisible && (
-      <View style={styles.container}>
-      <View style={styles.body}>
+      { renderMenuButton() }
+      <View style={styles.cameraView}>
         { renderCameraView() }
-      </View>  
-      <Text style={styles.legendTextField}>  Prediction: {prediction}</Text>
-      <View style={styles.body}>
-        
-      </View>  
       </View>
-      )}
+      <Text style={styles.legendTextField}>  prediction: {prediction}</Text>
+      <View style={styles.body}>
+      </View>  
         <View style={styles.submitButton} >{ renderTextInput() }</View>
         {!isDialogVisible && (<View style={styles.submitButton2}>{ renderChatButton() }</View>)}
       </View>
@@ -463,36 +471,18 @@ const styles = StyleSheet.create({
       paddingTop: Constants.statusBarHeight,
       backgroundColor: '#E8E8E8',
     },
-    header: {
-      backgroundColor: '#41005d'
-    },
-    title: {
-      margin: 10,
-      fontSize: 18,
-      fontWeight: 'bold',
-      textAlign: 'center',
-      color: '#ffffff'
-    },
-    body: {
-      padding: 5,
-      paddingTop: 25
-    },
     cameraView: {
       display: 'flex',
-      flex:1,
-      flexDirection: 'column',
-      justifyContent: 'flex-start',
-      alignItems: 'flex-end',
+      justifyContent: 'center', 
       width: '100%',
       height: '100%',
-      paddingTop: 10
+      alignItems: 'flex-start',
     },
     camera : {
-      width: 700/2,
-      height: 800/2,
+      width: '100%',
+      height: '100%',
       zIndex: 1,
-      borderWidth: 0,
-      borderRadius: 0,
+      marginTop: 120
     },
     translationView: {
       marginTop: 30, 
@@ -517,8 +507,8 @@ const styles = StyleSheet.create({
       fontStyle: 'italic',
       color: '#0f3381',
       position:'absolute',
-      bottom:'20%',
-      right:'20%',
+      bottom:'94%',
+      right:'25%',
       fontSize: 18,
       width: 200,
     },
@@ -527,7 +517,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         paddingVertical: 8,
         borderWidth: 1,
-        borderColor: 'purple',
+        borderColor: 'blue',
         borderStyle: 'solid',
         borderRadius: 8,
         color: 'black',
@@ -537,13 +527,13 @@ const styles = StyleSheet.create({
       
       submitButton: {
         position: 'absolute',
-        bottom:15,
-        left:15,
+        bottom:'2%',
+        left:'3%',
     },
     submitButton2: {
       position: 'absolute',
-      bottom:15,
-      right:15,
+      bottom:'2%',
+      right:'3%',
   }
     });
     const pickerSelectStyles = StyleSheet.create({
@@ -552,7 +542,7 @@ const styles = StyleSheet.create({
           paddingVertical: 12,
           paddingHorizontal: 10,
           borderWidth: 1,
-          borderColor: 'gray',
+          borderColor: 'grey',
           borderRadius: 4,
           color: 'black',
           paddingRight: 30
@@ -567,18 +557,7 @@ const styles = StyleSheet.create({
           color: 'black',
           paddingRight: 30,
           backgroundColor: '#cccccc'
-        },
-        inpAn: {
-          fontSize: 16,
-          paddingHorizontal: 10,
-          paddingVertical: 8,
-          borderWidth: 0.5,
-          borderColor: 'grey',
-          borderRadius: 3,
-          color: 'black',
-          paddingRight: 30,
-          backgroundColor: '#cccccc'
-        },
+        }
       });
       
           
