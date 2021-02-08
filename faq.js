@@ -5,7 +5,7 @@ import { Avatar} from '@ui-kitten/components';
 import { Card, CardTitle, CardContent, CardAction, CardButton, CardImage } from 'react-native-cards'; 
 import { render } from 'react-dom';
 import {DrawerActions, NavigationContainer, DefaultTheme, DarkTheme, useTheme} from '@react-navigation/native';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
+import { colors } from 'react-native/Libraries/NewAppScreen';
 import { Appbar } from 'react-native-paper';
 
 
@@ -17,7 +17,9 @@ export const faqpage =({navigation}) => {
 
 <SafeAreaView style={{
         flex: 1,
-        backgroundColor: colors.backgroundColor,
+        backgroundColor: colors.text,
+    
+
 }}>
             <ScrollView>
             
