@@ -5,7 +5,7 @@ import { Avatar} from '@ui-kitten/components';
 import { Card, CardTitle, CardContent, CardAction, CardButton, CardImage } from 'react-native-cards'; 
 import { render } from 'react-dom';
 import {DrawerActions, NavigationContainer, DefaultTheme, DarkTheme, useTheme} from '@react-navigation/native';
-import { colors } from 'react-native/Libraries/NewAppScreen';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
 import { Appbar } from 'react-native-paper';
 
 

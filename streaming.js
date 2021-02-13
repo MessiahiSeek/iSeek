@@ -13,6 +13,7 @@ import {
 } from 'react-native-paper';
 import { Audio } from 'expo-av';
 import * as FileSystem from 'expo-file-system';
+import * as Speech from 'expo-speech';
 
 //Permissions
 import * as Permissions from 'expo-permissions';
