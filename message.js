@@ -1,9 +1,14 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { Alert } from 'react-native';
+import { Alert, TouchableOpacity } from 'react-native';
 import { GiftedChat, SystemMessage } from 'react-native-gifted-chat';
+import Icon from 'react-native-vector-icons/Ionicons';
+import { DrawerActions } from '@react-navigation/native';
 import { XCamera } from './iCamera.js';
 import { settingspage } from './settingspage.js';
 import { faqpage } from './faq.js';
+
+var uuid = require('react-native-uuid');
+
 export const message =({navigation}) => {
   const [messages, setMessages] = useState([]);
   const [userText,setText] = useState("");
@@ -21,30 +26,12 @@ export const message =({navigation}) => {
       },
     ])
   }, [])
-  /*
-  const [messages, setMessages] = useState([
-    {
-      _id: 0,
-      text: 'Hello! How may I assist you?',
-      createdAt: new Date().getTime(),
-      user: {
-        _id: 2,
-        name: 'System',
-        avatar: require('./assets/splash.png')
-      }
-    },
-    {
-      _id: 1,
-      text: 'New chat started.',
-      createdAt: new Date().getTime(),
-      system: true
-    }
-  ]);
-*/
+
     function getResponse(text) {
       console.log("Whats up");
       console.log(text)
       fetch('http://iseek.cs.messiah.edu:5000/chatbot',
+      //fetch('http://153.42.129.91:5000/chatbot',
       {
       method: 'POST',
       headers:{
@@ -82,8 +69,9 @@ export const message =({navigation}) => {
           Alert.alert("Sorry this is not supported on this page");
         }
       else{
+        console.log(compTalk)
       setMessages(previousMessages => GiftedChat.append(previousMessages,{
-        _id: 3,
+        _id: uuid.v1() ,
         text: json.textResponse,
         createdAt: new Date().getTime(),
         user: {
@@ -98,6 +86,7 @@ export const message =({navigation}) => {
     }
   })
   setText("");
+  
     }
     const onSend = useCallback((messages = []) => {
       setText(messages[0].text);
@@ -107,34 +96,10 @@ export const message =({navigation}) => {
       console.log("Reached");
       getResponse(messages[0].text);
     }, [])
-/*
-    setMessages(prevState => [...prevState, newMessage]);
-    var userText = newMessage[0].text;
-    console.log(userText);
-    fetch('http://iseek.cs.messiah.edu:5000/chatbot',
-    {
-      method: 'POST',
-      body: JSON.stringify({
-        textString: userText,
-      })
-  })
-  .then((response) => response.json())
-  .then((json) => {
-    console.log(json.textResponse)
-    setMessages(prevState => [...prevState, {
-      _id: 3,
-      text: json.textResponse,
-      createdAt: new Date().getTime(),
-      system: true
-    }])
-  })
- */
-function voiceNav (nav){
-switch(nav){
-  case 1:
-}
-}
+
+
   return(
+    <>
     <GiftedChat
     messages={messages}
     onSend={messages => onSend(messages)}
@@ -144,5 +109,16 @@ switch(nav){
     alwaysShowSend
     scrollToBottom
     />
+
+    <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'90%',left:'5%'}} onPress={() => navigation.dispatch(DrawerActions.openDrawer())}/*onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}*/> 
+    
+         <Icon
+         name="ios-menu"
+         color="#ccc"
+         size={25}
+         onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
+       />
+      </TouchableOpacity> 
+      </>
   );
 }

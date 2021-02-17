@@ -108,7 +108,7 @@ export const streamingPage = ({navigation}) => {
     }
   }, []);
 
-    //--------------------------
+  //--------------------------
   // Run onUnmount routine
   // for cancelling animation 
   // (if running) to avoid leaks
@@ -394,7 +394,7 @@ const renderCameraView = () => {
                setIsDialogVisible(true);
                Alert.alert("We currently dont support this object");
              }
-
+            setIsFetching(false);
             })
     }
   
@@ -436,18 +436,16 @@ const renderCameraView = () => {
   const renderMenuButton = () => {
     return <View>
     <TouchableOpacity style = {{position: 'absolute', top:'50%',left:'5%'}} onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}> 
-    {isFetching ?  <ActivityIndicator color="#000">
-    </ActivityIndicator> :
+    
          <Icon
          name="ios-menu"
          color="#"
          size={25}
          onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
-       />}
+       />
       </TouchableOpacity>
       </View>
   }
- 
   return (
     <View style={styles.container}>
       { renderMenuButton() }

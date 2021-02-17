@@ -64,8 +64,7 @@ export const XCamera =({navigation}) => {
   const [isPictureFetching, setIsPictureFetching] = useState(false);
   const [picStr,setPicStr] = useState("");
   const [Load,SetLoad] = useState(false);
-  const [vid,setVid] = useState(null);
-
+  const [cameraFocus, setCameraFocus] = useState(true);
 
 
   useEffect(() => {
@@ -91,7 +90,11 @@ export const XCamera =({navigation}) => {
     const unsubscribe = navigation.addListener('focus', () => {
       SetObjectsInPhoto("");
       setPhoto("");
+      setRecording(null);
+      
     });
+
+    
 
     // Return the function to unsubscribe from the event so it gets removed on unmount
     return unsubscribe;
@@ -295,15 +298,17 @@ const handleOnPressOut = () => {
     encoding: FileSystem.EncodingType.Base64,
     });
     await MediaLibrary.saveToLibraryAsync(filename);
+    Speech.speak("Saved!");
   }
   ListObjects = async () => {
     //et obj = objectsInPic.split('\n');
-    Speech.speak("The Objects in this picture are: ");
+    
     if (objectsInPic.length === 1){
       Speech.speak("The object in this picture " + objectsInPic[0]);
       return;
     }
     else{
+    Speech.speak("The Objects in this picture are: ");
     for(i = 0; i < objectsInPic.length ; i++){
       if (i ===  objectsInPic.length - 1 ){
         Speech.speak("and " + objectsInPic[i]);
@@ -327,6 +332,7 @@ const handleOnPressOut = () => {
 
 
     if (!result.cancelled) {
+      console.log(result.base64);
       setIsPictureFetching(true);
       fetch('http://iseek.cs.messiah.edu:5000/image',
       //fetch('153.42.129.91:5000/image',
@@ -354,97 +360,76 @@ const handleOnPressOut = () => {
   setPhoto("");
  }
 
- //this.changeScreenBack(); 
+ //const isFocused = navigation.isFocused();
   return (
     
       
     <View style={styles.container}>
 
       
-      
+       
+
         {(photoJson != ""  && !isPictureFetching)  && (
            
-           <ImageBackground source ={{ uri:`data:image/jpg;base64,${photoJson}`}} style={{flex:1, height: undefined, width: undefined}}>
+        <ImageBackground source ={{ uri:`data:image/jpg;base64,${photoJson}`}} style={{flex:1, height: undefined, width: undefined}}>
             {(Load) && (<ActivityIndicator alignContent="center" size="large" color="#000" 
             style={{position:"absolute"}}> </ActivityIndicator>)}
 
-          <View style = {{position:"absolute", flex:'1', flexDirection:"row", borderRadius:100,bottom:'20%'}}>
-            
-          <ActionButton  buttonColor="rgba(231,76,60,1)">
-          <ActionButton.Item buttonColor='#f0fff1' title="Read Objects out loud" onPress={()=>this.ListObjects()}>
-            <Icon name="ios-text"   onPress={()=>this.ListObjects()}/>
-          </ActionButton.Item>
-        
-          <ActionButton.Item buttonColor='#5f6702' title="Save Picture"onPress={()=>this.findText()} >
-            <Icon name="ios-book" onPress={()=>this.SavePicture()}/>
-          </ActionButton.Item>
+      <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'2%',left:'42.5%'}} onPress={ async () =>  this.changeScreenBack()}>
+         <Image source={require("./images/cam.png")} style={{ width: 55, height: 55 , borderRadius:100}} onPress={ async () =>  this.changeScreenBack()}/>
+      </TouchableOpacity>
 
-          <ActionButton.Item buttonColor='#5f6702' title="Back to Home Screen"onPress={()=>this.findText()} >
-            <Icon name="ios-book" onPress={()=>this.changeScreenBack()}/>
-          </ActionButton.Item>
-          </ActionButton>
-          
-
-          <TouchableOpacity style={{bottom:'-80%',left:'500%'}} onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}> 
+      <TouchableOpacity style = {{position: 'absolute', borderRadius:"100%",bottom:'2%',left:'80%'}} onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}>
     {isFetching ?  <ActivityIndicator color="#0f0"></ActivityIndicator> :
-         <Image source={require("./images/chat.png")} style={{ width: 55, height: 55 ,  borderRadius:100}} />}
+        <Image source={require("./images/chat.png")} style={{ width: 55, height: 55 ,  borderRadius:100}} />}
       </TouchableOpacity> 
-      </View>
+
+      <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'2%',left:'3%'}} onPress={() => this.ListObjects() }> 
+         <Image source={require("./images/objects.jpg")} style={{ width: 55, height: 55 ,  borderRadius:100}} />
+    </TouchableOpacity> 
+
+      <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'90%',left:'5%'}} /*onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}*/> 
+         <Icon
+         name="ios-menu"
+         color="#ccc"
+         size={25}
+         onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
+       />
+      </TouchableOpacity> 
+
+      <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'90%',left:'90%'}} onPress={()=>this.SavePicture()} /*onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}*/> 
+         <Icon
+         name="ios-browsers"
+         color="#ccc"
+         size={25}
+         onPress = {() =>  this.SavePicture()}
+       />
+       </TouchableOpacity> 
           
+          
+       {/*   </View> */}
           </ImageBackground>
         )}
 
 
-{/*
-        {(photoJson == ""  && !isPictureFetching)  && (
-           <>
-           <Video
-           source={{ vid }}
-           rate={1.0}
-           volume={1.0}
-           isMuted={false}
-           resizeMode="cover"
-           shouldPlay
-           isLooping
-         />
 
-            {(Load) && (
-            <ActivityIndicator alignContent="center" size="large" color="#000" 
-            style={{position:"absolute"}}> </ActivityIndicator>)}
-
-          <View style={styles.close}>
-          <Button title="Save Picture" style={{position:"absolute", backgroundColor:'#F50303',borderRadius:10,borderWidth: 1,borderColor: '#fff'}} onPress={async () => this.SavePicture()}> Save Picture</Button>
-          </View>
-          <ActionButton style={styles.close2} buttonColor="rgba(231,76,60,1)">
-          <ActionButton.Item buttonColor='#f0fff1' title="Read Objects out loud" onPress={()=>this.ListObjects()}>
-            <Icon name="ios-text"   onPress={()=>this.ListObjects()}/>
-          </ActionButton.Item>
-          <ActionButton.Item buttonColor='#5f6702' title="Find text in screen"onPress={()=>this.findText()} >
-            <Icon name="ios-book" onPress={()=>this.findText()}/>
-          </ActionButton.Item>
-          </ActionButton>
-          </>
-        )}
-
-            */}
 
       {(isPictureFetching)&&<View style={[styles.container_nik,styles.horizontal]}>
         <ActivityIndicator alignContent="center" size="large" color="#000"></ActivityIndicator>
       </View>}
 
-
-      {(photoJson == "" && !isPictureFetching && vid == null) &&(
+      {(photoJson == "" && !isPictureFetching) &&(
         <>
-        <Camera style={{ flex: 1 }} type={type} ref={ref => { this.camera = ref; }}>
-      </Camera>
+        {cameraFocus && (
+          <Camera style={{ flex: 1 }} type={type} ref={ref => { this.camera = ref; }}>
+      </Camera>)}
       
       
-      {//!checkVid ? 
+    {/* for picture taking */} 
       <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'2%',left:'42.5%'}} onPress={ async () =>  this.snap()}>
          <Image source={require("./images/cam.png")} style={{ width: 55, height: 55 , borderRadius:100}} onPress={ async () =>  this.snap()}/>
-
       </TouchableOpacity>
-        }
+        
 
 <TouchableOpacity style = {{position: 'absolute', borderRadius:"100%",bottom:'2%',left:'80%'}} onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}>
     {isFetching ?  <ActivityIndicator color="#0f0"></ActivityIndicator> :
@@ -452,34 +437,30 @@ const handleOnPressOut = () => {
       </TouchableOpacity> 
 
      <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'2%',left:'3%'}} onPress={() => {setType(type === Camera.Constants.Type.back? Camera.Constants.Type.front: Camera.Constants.Type.back);}}> 
-    {isFetching ?  <ActivityIndicator color="#0f0"></ActivityIndicator> :
-         <Image source={require("./images/flipcamera.png")} style={{ width: 55, height: 55 ,  borderRadius:100}} />}
+         <Image source={require("./images/flipcamera.png")} style={{ width: 55, height: 55 ,  borderRadius:100}} />
     </TouchableOpacity> 
 
-      <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'90%',left:'5%'}} onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}> 
-    {isFetching ?  <ActivityIndicator color="#0f0"></ActivityIndicator> :
+      <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'90%',left:'5%'}} onPress={() => navigation.dispatch(DrawerActions.openDrawer())}/*onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}*/> 
+    
          <Icon
          name="ios-menu"
          color="#ccc"
          size={25}
          onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
-       />}
+       />
       </TouchableOpacity> 
 
-      <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'90%',left:'90%'}} onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}> 
-    {isFetching ?  <ActivityIndicator color="#0f0"></ActivityIndicator> :
+      <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'90%',left:'90%'}} onPress = {() =>  this.getCameraPic()} >
          <Icon
          name="ios-browsers"
          color="#ccc"
          size={25}
          onPress = {() =>  this.getCameraPic()}
-       />}
-
+       />
     </TouchableOpacity> 
-
         </>  
-      ) }
-        
+      )}
+      
     </View>
    ); 
   }
