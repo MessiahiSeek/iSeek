@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ActivityIndicator, Text, View, ScrollView, StyleSheet, Vibration, Platform, TouchableOpacity, Image, Modal} from 'react-native';
+import { ActivityIndicator, Alert, Text, View, ScrollView, StyleSheet, Vibration, Platform, TouchableOpacity, Image, Modal} from 'react-native';
 import Constants from 'expo-constants';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { DrawerActions } from '@react-navigation/native';
@@ -189,6 +189,8 @@ const handleCameraStream = (imageAsTensors) => {
       const nextImageTensor = await imageAsTensors.next().value;
       await getPrediction(nextImageTensor);
       requestAnimationFrameId = requestAnimationFrame(loop);
+      //updatePreview();
+      //gl.endFrameEXP();
     };
     loop();
   }
@@ -279,12 +281,8 @@ const renderCameraView = () => {
         if(data.objectAvailability){
 
           if(data.yesNoNeeded){
-            /*JOE*/
-            console.log("yes No needed")
-            console.log(data.objectChoice)
-            //YES NO NEEDED HERE
-            //if yes- pop up saying is this okay, if they click no ask them  to type again
-
+            Speech.speak("We Support " + data.objectChoice  + " is this okay?");
+            Speech.speak("If yes, continue with scanning, if no please try another word.");
           }
           else{
 
@@ -317,7 +315,6 @@ const renderCameraView = () => {
     setHasPermission(status === 'granted');
     if (status !== 'granted') return;
     setIsRecording(true);
-    // some of these are not applicable, but are required
     await Audio.setAudioModeAsync({
       allowsRecordingIOS: true,
       interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
@@ -375,15 +372,22 @@ const renderCameraView = () => {
              if(json.objectAvailability){
 
               if(json.yesNoNeeded){
-                /*JOE*/
-                console.log("yes No needed")
-                console.log(json.objectChoice)
-                //YES NO NEEDED HERE
-
+                console.log("hello world");
+                Alert.alert(
+                  "Training Mismatch",
+                  "Is "+ json.objectChoice + " okay?",
+                  [
+                    {
+                      text: "No",
+                      onPress: () => console.log("Canceled"),
+                      style: "cancel"
+                    },
+                    { text: "Yes", onPress: () => setInputVal(json.objectChoice) }
+                  ],
+                  { cancelable: false }
+                );
               }
               else{
-
-              
                 console.log("Here")
                 console.log(json.objectChoice)
                 setInputVal(json.objectChoice)
@@ -391,10 +395,11 @@ const renderCameraView = () => {
               }
 
              }else{
-               setIsDialogVisible(true);
+               
                Alert.alert("We currently dont support this object");
              }
-            setIsFetching(false);
+                setIsDialogVisible(false);
+                setIsFetching(false);
             })
     }
   
@@ -439,7 +444,7 @@ const renderCameraView = () => {
     
          <Icon
          name="ios-menu"
-         color="#"
+         //color="#"
          size={25}
          onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
        />
@@ -447,6 +452,9 @@ const renderCameraView = () => {
       </View>
   }
   return (
+    <>
+    
+      
     <View style={styles.container}>
       { renderMenuButton() }
       <View style={styles.cameraView}>
@@ -456,8 +464,10 @@ const renderCameraView = () => {
       <View style={styles.body}>
       </View>  
         <View style={styles.submitButton} >{ renderTextInput() }</View>
-        {!isDialogVisible && (<View style={styles.submitButton2}>{ renderChatButton() }</View>)}
-      </View>
+      <View style={styles.submitButton2}>{ renderChatButton() }</View>
+  </View>
+
+      </>
   );
 
       
