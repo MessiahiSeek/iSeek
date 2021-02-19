@@ -69,7 +69,7 @@ export const message =({navigation}) => {
           Alert.alert("Sorry this is not supported on this page");
         }
       else{
-        console.log(compTalk)
+        console.log(json.textResponse)
       setMessages(previousMessages => GiftedChat.append(previousMessages,{
         _id: uuid.v1() ,
         text: json.textResponse,
