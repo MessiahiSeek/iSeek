@@ -304,11 +304,11 @@ const handleOnPressOut = () => {
     //et obj = objectsInPic.split('\n');
     
     if (objectsInPic.length === 1){
-      Speech.speak("The object in this picture " + objectsInPic[0]);
+      Speech.speak("The object in this picture is" + objectsInPic[0]);
       return;
     }
     else{
-    Speech.speak("The Objects in this picture are: ");
+    Speech.speak("The objects in this picture are: ");
     for(i = 0; i < objectsInPic.length ; i++){
       if (i ===  objectsInPic.length - 1 ){
         Speech.speak("and " + objectsInPic[i]);
@@ -379,7 +379,7 @@ const handleOnPressOut = () => {
          <Image source={require("./images/cam.png")} style={{ width: 55, height: 55 , borderRadius:100}} onPress={ async () =>  this.changeScreenBack()}/>
       </TouchableOpacity>
 
-      <TouchableOpacity style = {{position: 'absolute', borderRadius:"100%",bottom:'2%',left:'80%'}} onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}>
+      <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'2%',left:'80%'}} onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}>
     {isFetching ?  <ActivityIndicator color="#0f0"></ActivityIndicator> :
         <Image source={require("./images/chat.png")} style={{ width: 55, height: 55 ,  borderRadius:100}} />}
       </TouchableOpacity> 
@@ -431,7 +431,7 @@ const handleOnPressOut = () => {
       </TouchableOpacity>
         
 
-<TouchableOpacity style = {{position: 'absolute', borderRadius:"100%",bottom:'2%',left:'80%'}} onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}>
+<TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'2%',left:'80%'}} onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}>
     {isFetching ?  <ActivityIndicator color="#0f0"></ActivityIndicator> :
          <Image source={require("./images/chat.png")} style={{ width: 55, height: 55 ,  borderRadius:100}} />}
       </TouchableOpacity> 
