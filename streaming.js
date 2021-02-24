@@ -48,6 +48,7 @@ export const streamingPage = ({navigation}) => {
     const [prediction, setPrediction] = useState('N/A');
 
     const [popUpTitle,setPopUpTitle] = useState("What object Are you looking for?")
+    const [cameraFocus, setCameraFocus] = useState(true);
 
     const TensorCamera = cameraWithTensors(Camera);
     let requestAnimationFrameId = 0;
@@ -78,7 +79,22 @@ export const streamingPage = ({navigation}) => {
           linearPCMIsFloat: false,
       },
     };
-
+    React.useEffect(() => {
+      const unsubscribe = navigation.addListener('focus', () => {
+        
+        setCameraFocus(true);
+      });
+      // Return the function to unsubscribe from the event so it gets removed on unmount
+      return unsubscribe;
+    }, [navigation]);
+  
+    React.useEffect(() =>{
+      const blurCamera = navigation.addListener('blur', () =>{
+        setCameraFocus(false);
+        setRecording(null);
+      });
+      return blurCamera;
+    }, [navigation]);
 
       //performance hacks (Platform dependent)
     const textureDims = Platform.OS === "ios" ? { width: 1080, height: 1920 } : { width: 1600, height: 1200 };
@@ -225,88 +241,10 @@ const renderCameraView = () => {
   
   const handleOnPressOut = () => {
     stopRecording();
-    getTranscription();
   };
 
 
-  const getTranscription = async () => {
-    setIsFetching(true);
-    try {
-        const info = await FileSystem.getInfoAsync(recording.getURI());
-        const fileUri = info.uri;
-        var file = {
-          uri: fileUri,
-          type: 'audio/x-wav',
-          name: 'audio.wav'
-        }
-        var body = new FormData();
-        body.append('file',file);
-        
-        const response = await fetch('http://iseek.cs.messiah.edu:5000/voiceStreamingCheck'/*'http://153.42.129.91:5000/voiceStreamingCheck'*/, {
-            method: 'POST',
-            body: body
-        });
-        const data = await response.json();
-        console.log(data)
-        if(data.amazonNeeded){
-        switch(data.textResponse){
-          case ("%0oc"):
-            navigation.navigate('Camera');
-            break; 
-          case("%0om"):
-            navigation.navigate('Messenger');
-            break;
-            case("%0st"):
-          
-            break;
-          case("%0tp"):
-            console.log("her")
-            navigation.navigate('Camera');
-            console.log("herer")
-            break;
-          case("%1si"):
-          case("%0ri"):
-          if(prediction === 'N/A'){
-            Speech.speak("We cannot determine  the object in the screen.")
-          }
-          else{
-            Speech.speak("The Object Currently Shown is " + prediction);
-          }
-          break;
-        default:
-          Speech.speak(data.textResponse);
-        }
-      }
-      else{
-        if(data.objectAvailability){
-
-          if(data.yesNoNeeded){
-            Speech.speak("We Support " + data.objectChoice  + " is this okay?");
-            Speech.speak("If yes, continue with scanning, if no please try another word.");
-          }
-          else{
-
-          
-            console.log("Here")
-            console.log(data.objectChoice)
-            setInputVal(data.objectChoice)
-
-          }
-
-         }else{
-           Alert.alert("We currently dont support this object");
-         }
-
-      }
-    } catch(error) {
-        console.log('There was an error reading file', error);
-        Alert.alert("Error, please try again")
-        stopRecording();
-        // resetRecording();
-    }
   
-    setIsFetching(false);
-  }
 
 
 
@@ -315,6 +253,7 @@ const renderCameraView = () => {
     setHasPermission(status === 'granted');
     if (status !== 'granted') return;
     setIsRecording(true);
+
     await Audio.setAudioModeAsync({
       allowsRecordingIOS: true,
       interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
@@ -324,7 +263,9 @@ const renderCameraView = () => {
       playThroughEarpieceAndroid: true,
   
     });
+
     const recording = new Audio.Recording();
+
     try {
       await recording.prepareToRecordAsync(recordingOptions);
       await recording.startAsync();
@@ -337,11 +278,91 @@ const renderCameraView = () => {
 
   const stopRecording = async () => {
     setIsRecording(false);
+    setIsFetching(true);
+
+    setTimeout(async ()  => {
     try {
         await recording.stopAndUnloadAsync();
+        try {
+            const info = await FileSystem.getInfoAsync(recording.getURI());
+            const fileUri = info.uri;
+            var file = {
+              uri: fileUri,
+              type: 'audio/x-wav',
+              name: 'audio.wav'
+            }
+            var body = new FormData();
+            body.append('file',file);
+            
+            const response = await fetch('http://iseek.cs.messiah.edu:5000/voiceStreamingCheck'/*'http://153.42.129.91:5000/voiceStreamingCheck'*/, {
+                method: 'POST',
+                body: body
+            });
+            const data = await response.json();
+            console.log(data)
+            if(data.amazonNeeded){
+            switch(data.textResponse){
+              case ("%0oc"):
+                navigation.navigate('Camera');
+                break; 
+              case("%0om"):
+                navigation.navigate('Messenger');
+                break;
+                case("%0st"):
+              
+                break;
+              case("%0tp"):
+                console.log("her")
+                navigation.navigate('Camera');
+                console.log("herer")
+                break;
+              case("%1si"):
+              case("%0ri"):
+              if(prediction === 'N/A'){
+                Speech.speak("We cannot determine  the object in the screen.")
+              }
+              else{
+                Speech.speak("The Object Currently Shown is " + prediction);
+              }
+              break;
+            default:
+              Speech.speak(data.textResponse);
+            }
+          }
+          else{
+            if(data.objectAvailability){
+    
+              if(data.yesNoNeeded){
+                Speech.speak("We Support " + data.objectChoice  + " is this okay?");
+                Speech.speak("If yes, continue with scanning, if no please try another word.");
+              }
+              else{
+    
+              
+                console.log("Here")
+                console.log(data.objectChoice)
+                setInputVal(data.objectChoice)
+    
+              }
+    
+             }else{
+               Alert.alert("We currently dont support this object");
+             }
+    
+          }
+        } catch(error) {
+            console.log('There was an error reading file', error);
+            Alert.alert("Error, please try again")
+            stopRecording();
+            // resetRecording();
+        }
+      
+        setIsFetching(false);
     } catch (error) {
+      console.log(error)
         // Do nothing -- we are already unloaded.
     }
+  }, 1000);
 }
 
   const renderChatButton = () => {
@@ -406,7 +427,11 @@ const renderCameraView = () => {
   const renderTextInput = () => {
     return <Provider>
       <View>
-      <TouchableOpacity onPress={() => setIsDialogVisible(true)}>
+      <TouchableOpacity onPress={() => {
+        setIsDialogVisible(true);
+        setCameraFocus(false);
+      }
+      }>
       <Image source={require("./images/binoculars.png")} style={{ width: 55, height: 55 ,  borderRadius:100}} />
       </TouchableOpacity> 
       <Portal >
@@ -424,7 +449,7 @@ const renderCameraView = () => {
               <Dialog.Actions>
               <Button onPress={() => {
                 setIsDialogVisible(false);
-                
+                setCameraFocus(true);
                 checkForAvailability();
                 
                 if(popUpTitle !== "What object are you looking for?"){
@@ -452,13 +477,13 @@ const renderCameraView = () => {
       </View>
   }
   return (
-    <>
+     <>
     
       
     <View style={styles.container}>
       { renderMenuButton() }
       <View style={styles.cameraView}>
-        { renderCameraView() }
+        { cameraFocus && renderCameraView() }
       </View>
       <Text style={styles.legendTextField}>  prediction: {prediction}</Text>
       <View style={styles.body}>

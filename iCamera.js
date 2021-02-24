@@ -16,6 +16,7 @@ import { message } from './message.js';
 import { streamingPage } from './streaming.js';
 import { Container } from 'semantic-ui-react';
 import { DrawerActions } from '@react-navigation/native';
+import { NavigationEvents } from 'react-navigation';
 
 
 
@@ -90,15 +91,21 @@ export const XCamera =({navigation}) => {
     const unsubscribe = navigation.addListener('focus', () => {
       SetObjectsInPhoto("");
       setPhoto("");
-      setRecording(null);
-      
+      setCameraFocus(true);
     });
-
-    
-
     // Return the function to unsubscribe from the event so it gets removed on unmount
     return unsubscribe;
   }, [navigation]);
+
+  React.useEffect(() =>{
+    const blurCamera = navigation.addListener('blur', () =>{
+      setRecording(null);
+      setCameraFocus(false);
+    });
+    return blurCamera;
+  }, [navigation]);
+
+
   snap = async () => {
     console.log("reached")
     if (this.camera) {
@@ -162,17 +169,12 @@ export const XCamera =({navigation}) => {
 
   const stopRecording = async () => {
     setIsRecording(false);
+    setIsFetching(true); 
+
+    setTimeout(async ()  => {
     try {
-        await recording.stopAndUnloadAsync();
-    } catch (error) {
-        // Do nothing -- we are already unloaded.
-    }
-}
-
-//code snippet that reads audio file and converts it to text
-
-const getTranscription = async () => {
-  setIsFetching(true);
+      await recording.stopAndUnloadAsync();
+       
   try {
       const info = await FileSystem.getInfoAsync(recording.getURI());
       const fileUri = info.uri;
@@ -184,9 +186,9 @@ const getTranscription = async () => {
       var body = new FormData();
       body.append('file',file);
       
-      const response = await fetch('http://iseek.cs.messiah.edu:5000/recording'
+      const response = await fetch('http://iseek.cs.messiah.edu:5000/recording',{
       /*'http://ec2-3-23-33-73.us-east-2.compute.amazonaws.com:5000/recording'*/
-      /*'http://153.42.129.91:5000/recording'*/, {
+      //'http://153.42.129.91:5000/recording', {
           method: 'POST',
           body: body
       });
@@ -274,14 +276,23 @@ const getTranscription = async () => {
       stopRecording();
   }
   setIsFetching(false);
+
+    } catch (error) {
+      console.log(error)
+        // Do nothing -- we are already unloaded.
+    }
+  }, 1000);
 }
+
+//code snippet that reads audio file and converts it to text
+
+
 const handleOnPressIn = () => {
   startRecording();
 };
 
 const handleOnPressOut = () => {
   stopRecording();
-  getTranscription();
 };
 
 
