@@ -218,7 +218,7 @@ export const faqpage =({navigation}) => {
               {/*--------------------------------------------------------------*/}
               <Card.Title style={{color: colors.text}}>Questions</Card.Title>
               <Text style={{marginBottom: 10, color: colors.text}}>
-              If you have questions or feedback about this app please email us at admin@iseek.com
+              If you have questions or feedback about this app, please email us at admin@iseek.com
               </Text>
               <Card.Divider style={{color: colors.text}}/>
               {/*--------------------------------------------------------------*/}
