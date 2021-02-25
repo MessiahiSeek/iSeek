@@ -1,6 +1,6 @@
 import React, { useState, useEffect, Component  } from 'react';
-import { StyleSheet, SafeAreaView, ScrollView , TouchableOpacity, Image,  ActivityIndicator, Alert} from 'react-native';
-import { Card, CardTitle, CardContent, CardAction, CardButton, CardImage } from 'react-native-cards'; 
+import { StyleSheet, SafeAreaView, ScrollView , Text, TouchableOpacity, Image,  ActivityIndicator, Alert} from 'react-native';
+import { CardTitle, CardContent, CardAction, CardButton, CardImage } from 'react-native-cards'; 
 import { render } from 'react-dom';
 import {/*DrawerActions*/ NavigationContainer, DefaultTheme, DarkTheme, useTheme} from '@react-navigation/native';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
@@ -10,6 +10,7 @@ import { DrawerActions } from '@react-navigation/native';
 import { Audio } from 'expo-av';
 import * as FileSystem from 'expo-file-system';
 import * as Permissions from 'expo-permissions';
+import { Card, Button} from 'react-native-elements'
 
 const recordingOptions = {
   // android not currently in use, but parameters are required
@@ -182,7 +183,7 @@ export const faqpage =({navigation}) => {
 
 <SafeAreaView style={{
         flex: 1,
-        backgroundColor: colors.text,
+        backgroundColor: colors.background,
     
 
 }}>
@@ -190,62 +191,43 @@ export const faqpage =({navigation}) => {
 
 
             <ScrollView>
-            
-            <Card>
-    <CardTitle
-      title="What is ISeek?"
-    />
-    <CardContent 
-    text="ISeek is an app to help the visually imparied with finding objects and reading text out loud"
-    />
-    <CardAction 
-      separator={true} 
-      inColumn={false}>
-    </CardAction>
-    <CardTitle
-      title="Object detection"
-    />
-    <CardContent text="To use object detection, you can either take a photo or use a live video stream. Either tap the center button at the bottom of the camera page or use your voice to activate the camera. This will allow the camera to find objects in the room and read what it finds out loud." />
-  <CardAction 
-      separator={true} 
-      inColumn={false}>
-    </CardAction>
-    <CardTitle
-      title="Chat Bot"
-    />
-    <CardContent text="To use the chat bot, open the Messenger page. You can either type messages or speak out loud to activate the chat bot. It will continuously learn about you and try to help answer any questions you may have." />
-  <CardAction 
-      separator={true} 
-      inColumn={false}>
-    </CardAction>
-  <CardTitle
-      title="Light / Dark Mode"
-    />
-    <CardContent text="To use light and dark mode, open the drawer to the side of the app. This will give you the option to toggle a swtich based on your visual needs for light and dark text. "/>
-    <CardAction 
-      separator={true} 
-      inColumn={false}>
-    </CardAction>
-    <CardTitle
-      title="Questions or Feedback"
-    />
-    <CardContent text="If you have questions or feedback about this app, please email us at admin@iseek.com" />
-  <CardAction 
-      separator={true} 
-      inColumn={false}>
-    </CardAction>
-    <CardTitle
-      title="App Version"
-    />
-    <CardContent text="1.0.5" />
-  <CardAction 
-      separator={true} 
-      inColumn={false}>
-    </CardAction>
-    
-            
-
-            </Card>
+            <Card containerStyle={{backgroundColor: colors.background}}>
+              <Card.Title style={{color: colors.text}}>What is iSeek?</Card.Title>
+              <Text style={{marginBottom: 10, color: colors.text}}>
+              ISeek is an app to help the visually imparied with finding objects and reading text out loud
+              </Text>
+              <Card.Divider style={{color: colors.text}}/>
+              {/*--------------------------------------------------------------*/}
+              <Card.Title style={{color: colors.text}}>Object Detection</Card.Title>
+              <Text style={{marginBottom: 10, color: colors.text}}>
+              To use object detection, you can either take a photo or use a live video stream. Either tap the center button at the bottom of the camera page or use your voice to activate the camera. This will allow the camera to find objects in the room and read what it finds out loud.
+              </Text>
+              <Card.Divider style={{color: colors.text}}/>
+              {/*--------------------------------------------------------------*/}
+              <Card.Title style={{color: colors.text}}>Chat Bot</Card.Title>
+              <Text style={{marginBottom: 10, color: colors.text}}>
+              To use the chat bot, open the Messenger page. You can either type messages or speak out loud to activate the chat bot. It will continuously learn about you and try to help answer any questions you may have.
+              </Text>
+              <Card.Divider style={{color: colors.text}}/>
+              {/*--------------------------------------------------------------*/}
+              <Card.Title style={{color: colors.text}}>Light Dark Mode</Card.Title>
+              <Text style={{marginBottom: 10, color: colors.text}}>
+              To use light and dark mode, open the drawer to the side of the app. This will give you the option to toggle a swtich based on your visual needs for light and dark text.
+              </Text>
+              <Card.Divider style={{color: colors.text}}/>
+              {/*--------------------------------------------------------------*/}
+              <Card.Title style={{color: colors.text}}>Questions</Card.Title>
+              <Text style={{marginBottom: 10, color: colors.text}}>
+              If you have questions or feedback about this app please email us at admin@iseek.com
+              </Text>
+              <Card.Divider style={{color: colors.text}}/>
+              {/*--------------------------------------------------------------*/}
+              <Card.Title style={{color: colors.text}}>App Version</Card.Title>
+              <Text style={{marginBottom: 10, color: colors.text}}>
+              1.0.5
+              </Text>
+              {/*--------------------------------------------------------------*/}
+              </Card>
           </ScrollView>
         </SafeAreaView>
 

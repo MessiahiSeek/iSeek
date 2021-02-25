@@ -49,6 +49,7 @@
     "react-native-cards": "^1.1.4",
     "react-native-carousel-control": "^2.0.1",
     "react-native-collapsible": "^1.5.3",
+    "react-native-elements": "^3.2.0",
     "react-native-event-listeners": "^1.0.7",
     "react-native-fs": "^2.16.6",
     "react-native-gesture-handler": "~1.6.0",
