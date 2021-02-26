@@ -170,7 +170,9 @@ Example (with a topk parameter set to 3 => default):
 In this case, we use topk set to 1 as we are interested in the higest result for both performance and simplicity. This means the array will return 1 prediction only!
 ------------------------------------------------------------------------*/
 const getPrediction = async(tensor) => {
-    if(!tensor) { return; }
+  if(!tensor) { 
+    return;}
+
 
     //topk set to 1
     const prediction = await mobilenetModel.classify(tensor, 1);
@@ -179,14 +181,23 @@ const getPrediction = async(tensor) => {
     
     //console.log(prediction[0].className);
 
-    if(!prediction || prediction.length === 0) { return; }
+    if(!prediction || prediction.length === 0) { 
+      console.log("No predict")
+      return; }
 
     //only attempt translation when confidence is higher than 20%
     
     if(prediction[0].className == inputVal) {
       console.log(inputVal);
       Vibration.vibrate();
+      const { sound } = Audio.Sound.createAsync(
+        require('./assets/small-bell-ringing-02.mp3'),{ shouldPlay: true }
+          );
+          console.log('Playing Sound');
     }
+      
+
+
     if(prediction[0].probability > 0.6) {
       setPrediction(prediction[0].className)
       cancelAnimationFrame(requestAnimationFrameId);
@@ -195,6 +206,7 @@ const getPrediction = async(tensor) => {
       
     }
   }
+  
 
   /*-----------------------------------------------------------------------
 Helper function to handle the camera tensor streams. Here, to keep up reading input streams, we use requestAnimationFrame JS method to keep looping for getting better predictions (until we get one with enough confidence level).
@@ -375,7 +387,7 @@ const renderCameraView = () => {
   }
   const checkForAvailability = async () =>{
     
-    console.log(inputVal);
+    // console.log(inputVal);
     //fetch('http://ec2-3-23-33-73.us-east-2.compute.amazonaws.com:5000/streamingCheck',
     await fetch(/*'http://153.42.129.91:5000/streamingCheck'*/'http://iseek.cs.messiah.edu:5000/streamingCheck',
            {
