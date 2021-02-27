@@ -198,7 +198,7 @@ const getPrediction = async(tensor) => {
       
 
 
-    if(prediction[0].probability > 0.6) {
+    if(prediction[0].probability > 0.4) {
       setPrediction(prediction[0].className)
       cancelAnimationFrame(requestAnimationFrameId);
       setPredictionFound(true);
@@ -265,7 +265,7 @@ const renderCameraView = () => {
     setHasPermission(status === 'granted');
     if (status !== 'granted') return;
     setIsRecording(true);
-
+    Vibration.vibrate();
     await Audio.setAudioModeAsync({
       allowsRecordingIOS: true,
       interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
@@ -497,7 +497,8 @@ const renderCameraView = () => {
       <View style={styles.cameraView}>
         { cameraFocus && renderCameraView() }
       </View>
-      <Text style={styles.legendTextField}>  prediction: {prediction}</Text>
+      <Text style={styles.legendTextField2}>  Searching For: {inputVal}</Text>
+      <Text style={styles.legendTextField}>  Prediction: {prediction.split(",")[0]}</Text>
       <View style={styles.body}>
       </View>  
         <View style={styles.submitButton} >{ renderTextInput() }</View>
@@ -549,15 +550,25 @@ const styles = StyleSheet.create({
       marginBottom: 50
     },
     legendTextField: {
-        textAlign: 'center', 
+      textAlign: 'center', 
       fontStyle: 'italic',
       color: '#0f3381',
       position:'absolute',
       bottom:'94%',
-      right:'25%',
+      right:'-5%',
       fontSize: 18,
-      width: 200,
+      width: 400,
     },
+    legendTextField2: {
+    textAlign: 'center', 
+    fontStyle: 'italic',
+    color: '#0f3381',
+    position:'absolute',
+    bottom:'96%',
+    right:'-5%',
+    fontSize: 18,
+    width: 400,
+  },
     inputAndroid: {
         fontSize: 16,
         paddingHorizontal: 10,

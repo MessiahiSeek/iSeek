@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Component  } from 'react';
-import { Button, Text, View, TouchableOpacity, ref, StyleSheet, ActivityIndicator, Image, ImageBackground , Alert } from 'react-native';
+import { Button, Text, View, TouchableOpacity, Vibration, ref, StyleSheet, ActivityIndicator, Image, ImageBackground , Alert } from 'react-native';
 import { Camera } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
 import { Audio } from 'expo-av';
@@ -133,6 +133,9 @@ export const XCamera =({navigation}) => {
              SetObjectsInPhoto(json.objects);
              console.log(json.objects);
              setIsPictureFetching(false);
+             const { sound } = Audio.Sound.createAsync(
+              require('./assets/small-bell-ringing-02.mp3'),{ shouldPlay: true }
+                );
             })
          });
          
@@ -145,6 +148,7 @@ export const XCamera =({navigation}) => {
     const { status } = await Permissions.askAsync(Permissions.AUDIO_RECORDING);
     setHasPermission(status === 'granted');
     if (status !== 'granted') return;
+    Vibration.vibrate();
     setIsRecording(true);
     // some of these are not applicable, but are required
     await Audio.setAudioModeAsync({
@@ -234,6 +238,9 @@ export const XCamera =({navigation}) => {
                      setPhoto(json.pictureResponse);
                      SetObjectsInPhoto(json.objects);
                      setIsPictureFetching(false);
+                     const { sound } = Audio.Sound.createAsync(
+                      require('./assets/small-bell-ringing-02.mp3'),{ shouldPlay: true }
+                        );
                     })
                  });
              }  

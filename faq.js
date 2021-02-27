@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Component  } from 'react';
-import { StyleSheet, SafeAreaView, ScrollView , Text, TouchableOpacity, Image,  ActivityIndicator, Alert} from 'react-native';
+import { StyleSheet, SafeAreaView, ScrollView , Text, TouchableOpacity, Image, Vibration,  ActivityIndicator, Alert} from 'react-native';
 import { CardTitle, CardContent, CardAction, CardButton, CardImage } from 'react-native-cards'; 
 import { render } from 'react-dom';
 import {/*DrawerActions*/ NavigationContainer, DefaultTheme, DarkTheme, useTheme} from '@react-navigation/native';
@@ -146,6 +146,7 @@ export const faqpage =({navigation}) => {
     setHasPermission(status === 'granted');
     if (status !== 'granted') return;
     setIsRecording(true);
+    Vibration.vibrate();
     // some of these are not applicable, but are required
     await Audio.setAudioModeAsync({
       allowsRecordingIOS: true,
