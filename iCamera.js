@@ -67,6 +67,9 @@ export const XCamera =({navigation}) => {
   const [Load,SetLoad] = useState(false);
   const [cameraFocus, setCameraFocus] = useState(true);
 
+  useEffect(() =>{
+      Speech.speak("Welcome... this is an application to aid the visually impaired with finding misplaced objects, you are now on the camera page")
+  }, []);
 
   useEffect(() => {
     (async () => {
