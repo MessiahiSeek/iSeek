@@ -501,8 +501,8 @@ const renderCameraView = () => {
       <Text style={styles.legendTextField}>  Prediction: {prediction.split(",")[0]}</Text>
       <View style={styles.body}>
       </View>  
-        <View style={styles.submitButton} >{ renderTextInput() }</View>
-      <View style={styles.submitButton2}>{ renderChatButton() }</View>
+        <View style = {{position: 'absolute',  zIndex: 1200, borderRadius:100,bottom:'2%',left:'3%'}}  >{ renderTextInput() }</View>
+      <View style = {{position: 'absolute', zIndex: 1200, borderRadius:100,bottom:'2%',left:'80%'}}>{ cameraFocus && renderChatButton() }</View>
   </View>
 
       </>

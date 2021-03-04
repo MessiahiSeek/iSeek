@@ -66,6 +66,7 @@ export const XCamera =({navigation}) => {
   const [picStr,setPicStr] = useState("");
   const [Load,SetLoad] = useState(false);
   const [cameraFocus, setCameraFocus] = useState(true);
+  
 
   useEffect(() =>{
       Speech.speak("Welcome... this is an application to aid the visually impaired with finding misplaced objects, you are now on the camera page")
@@ -160,7 +161,7 @@ export const XCamera =({navigation}) => {
       playsInSilentModeIOS: true,
       shouldDuckAndroid: true,
       interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
-      playThroughEarpieceAndroid: true,
+      playThroughEarpieceAndroid: false,
   
     });
     const recording = new Audio.Recording();
@@ -172,6 +173,7 @@ export const XCamera =({navigation}) => {
       stopRecording();
     }
     setRecording(recording);
+    
   }
 
   const stopRecording = async () => {
@@ -325,7 +327,7 @@ const handleOnPressOut = () => {
     //et obj = objectsInPic.split('\n');
     
     if (objectsInPic.length === 1){
-      Speech.speak("The object in this picture is" + objectsInPic[0]);
+      Speech.speak("The object in this picture is " + objectsInPic[0]);
       return;
     }
     else{
@@ -452,10 +454,10 @@ const handleOnPressOut = () => {
       </TouchableOpacity>
         
 
-<TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'2%',left:'80%'}} onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}>
+{ cameraFocus && <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'2%',left:'80%'}} onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}>
     {isFetching ?  <ActivityIndicator color="#0f0"></ActivityIndicator> :
          <Image source={require("./images/chat.png")} style={{ width: 55, height: 55 ,  borderRadius:100}} />}
-      </TouchableOpacity> 
+      </TouchableOpacity> }
 
      <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'2%',left:'3%'}} onPress={() => {setType(type === Camera.Constants.Type.back? Camera.Constants.Type.front: Camera.Constants.Type.back);}}> 
          <Image source={require("./images/flipcamera.png")} style={{ width: 55, height: 55 ,  borderRadius:100}} />

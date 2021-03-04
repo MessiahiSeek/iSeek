@@ -42,7 +42,24 @@ export const faqpage =({navigation}) => {
   const [isFetching, setIsFetching] = useState(false);
   const [recording, setRecording] = useState(null);
   const [hasPermission, setHasPermission] = useState(null);
+  const [cameraFocus, setCameraFocus] = useState(true);
 
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      
+      setCameraFocus(true);
+    });
+    // Return the function to unsubscribe from the event so it gets removed on unmount
+    return unsubscribe;
+  }, [navigation]);
+
+  React.useEffect(() =>{
+    const blurCamera = navigation.addListener('blur', () =>{
+      setCameraFocus(false);
+      setRecording(null);
+    });
+    return blurCamera;
+  }, [navigation]);
 
   const {colors} = useTheme();
 
@@ -154,7 +171,7 @@ export const faqpage =({navigation}) => {
       playsInSilentModeIOS: true,
       shouldDuckAndroid: true,
       interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
-      playThroughEarpieceAndroid: true,
+      playThroughEarpieceAndroid: false,
   
     });
     const recording = new Audio.Recording();
@@ -243,10 +260,10 @@ export const faqpage =({navigation}) => {
   />
  </TouchableOpacity> 
 
- <TouchableOpacity style = {{position: 'absolute', borderRadius:"100%",bottom:'2%',left:'80%'}} onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}>
+ { cameraFocus && <TouchableOpacity style = {{position: 'absolute', borderRadius:"100%",bottom:'2%',left:'80%'}} onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}>
     {isFetching ?  <ActivityIndicator color="#0f0"></ActivityIndicator> :
          <Image source={require("./images/chat.png")} style={{ width: 55, height: 55 ,  borderRadius:100}} />}
-      </TouchableOpacity> 
+      </TouchableOpacity>  }
 
 
   </>
