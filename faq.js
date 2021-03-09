@@ -78,11 +78,12 @@ export const faqpage =({navigation}) => {
     try {
         const info = await FileSystem.getInfoAsync(recording.getURI());
         const fileUri = info.uri;
-        var file = {
-          uri: fileUri,
-          type: 'audio/x-wav',
-          name: 'audio.wav'
-        }
+        const name = fileUri.split(".")[1] == "wav" ? 'audio.wav' : 'audio.m4a';
+            var file = {
+              uri: fileUri,
+              type: 'audio/x-wav',
+              name: name
+            }
         var body = new FormData();
         body.append('file',file);
         

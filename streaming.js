@@ -39,7 +39,7 @@ export const streamingPage = ({navigation}) => {
 
 
     //for text input boxes
-    const [inputVal, setInputVal] = useState("lol");
+    const [inputVal, setInputVal] = useState("");
     const [isDialogVisible, setIsDialogVisible] = useState(false);
 
     //Tensorflow and Permissions
@@ -277,7 +277,6 @@ const renderCameraView = () => {
     });
 
     const recording = new Audio.Recording();
-
     try {
       await recording.prepareToRecordAsync(recordingOptions);
       await recording.startAsync();
@@ -298,10 +297,11 @@ const renderCameraView = () => {
         try {
             const info = await FileSystem.getInfoAsync(recording.getURI());
             const fileUri = info.uri;
+            const name = fileUri.split(".")[1] == "wav" ? 'audio.wav' : 'audio.m4a';
             var file = {
               uri: fileUri,
               type: 'audio/x-wav',
-              name: 'audio.wav'
+              name: name
             }
             var body = new FormData();
             body.append('file',file);
