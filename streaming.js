@@ -39,7 +39,7 @@ export const streamingPage = ({navigation}) => {
 
 
     //for text input boxes
-    const [inputVal, setInputVal] = useState("lol");
+    const [inputVal, setInputVal] = useState("");
     const [isDialogVisible, setIsDialogVisible] = useState(false);
 
     //Tensorflow and Permissions
@@ -170,7 +170,9 @@ Example (with a topk parameter set to 3 => default):
 In this case, we use topk set to 1 as we are interested in the higest result for both performance and simplicity. This means the array will return 1 prediction only!
 ------------------------------------------------------------------------*/
 const getPrediction = async(tensor) => {
-    if(!tensor) { return; }
+  if(!tensor) { 
+    return;}
+
 
     //topk set to 1
     const prediction = await mobilenetModel.classify(tensor, 1);
@@ -179,15 +181,24 @@ const getPrediction = async(tensor) => {
     
     //console.log(prediction[0].className);
 
-    if(!prediction || prediction.length === 0) { return; }
+    if(!prediction || prediction.length === 0) { 
+      console.log("No predict")
+      return; }
 
     //only attempt translation when confidence is higher than 20%
     
     if(prediction[0].className == inputVal) {
       console.log(inputVal);
       Vibration.vibrate();
+      const { sound } = Audio.Sound.createAsync(
+        require('./assets/small-bell-ringing-02.mp3'),{ shouldPlay: true }
+          );
+          console.log('Playing Sound');
     }
-    if(prediction[0].probability > 0.6) {
+      
+
+
+    if(prediction[0].probability > 0.4) {
       setPrediction(prediction[0].className)
       cancelAnimationFrame(requestAnimationFrameId);
       setPredictionFound(true);
@@ -195,6 +206,7 @@ const getPrediction = async(tensor) => {
       
     }
   }
+  
 
   /*-----------------------------------------------------------------------
 Helper function to handle the camera tensor streams. Here, to keep up reading input streams, we use requestAnimationFrame JS method to keep looping for getting better predictions (until we get one with enough confidence level).
@@ -253,7 +265,7 @@ const renderCameraView = () => {
     setHasPermission(status === 'granted');
     if (status !== 'granted') return;
     setIsRecording(true);
-
+    Vibration.vibrate();
     await Audio.setAudioModeAsync({
       allowsRecordingIOS: true,
       interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
@@ -265,7 +277,6 @@ const renderCameraView = () => {
     });
 
     const recording = new Audio.Recording();
-
     try {
       await recording.prepareToRecordAsync(recordingOptions);
       await recording.startAsync();
@@ -286,10 +297,11 @@ const renderCameraView = () => {
         try {
             const info = await FileSystem.getInfoAsync(recording.getURI());
             const fileUri = info.uri;
+            const name = fileUri.split(".")[1] == "wav" ? 'audio.wav' : 'audio.m4a';
             var file = {
               uri: fileUri,
               type: 'audio/x-wav',
-              name: 'audio.wav'
+              name: name
             }
             var body = new FormData();
             body.append('file',file);
@@ -375,7 +387,7 @@ const renderCameraView = () => {
   }
   const checkForAvailability = async () =>{
     
-    console.log(inputVal);
+    // console.log(inputVal);
     //fetch('http://ec2-3-23-33-73.us-east-2.compute.amazonaws.com:5000/streamingCheck',
     await fetch(/*'http://153.42.129.91:5000/streamingCheck'*/'http://iseek.cs.messiah.edu:5000/streamingCheck',
            {
@@ -485,11 +497,12 @@ const renderCameraView = () => {
       <View style={styles.cameraView}>
         { cameraFocus && renderCameraView() }
       </View>
-      <Text style={styles.legendTextField}>  prediction: {prediction}</Text>
+      <Text style={styles.legendTextField2}>  Searching For: {inputVal}</Text>
+      <Text style={styles.legendTextField}>  Prediction: {prediction.split(",")[0]}</Text>
       <View style={styles.body}>
       </View>  
-        <View style={styles.submitButton} >{ renderTextInput() }</View>
-      <View style={styles.submitButton2}>{ renderChatButton() }</View>
+        <View style = {{position: 'absolute',  zIndex: 1200, borderRadius:100,bottom:'2%',left:'3%'}}  >{ renderTextInput() }</View>
+      <View style = {{position: 'absolute', zIndex: 1200, borderRadius:100,bottom:'2%',left:'80%'}}>{ cameraFocus && renderChatButton() }</View>
   </View>
 
       </>
@@ -537,15 +550,25 @@ const styles = StyleSheet.create({
       marginBottom: 50
     },
     legendTextField: {
-        textAlign: 'center', 
+      textAlign: 'center', 
       fontStyle: 'italic',
       color: '#0f3381',
       position:'absolute',
       bottom:'94%',
-      right:'25%',
+      right:'-5%',
       fontSize: 18,
-      width: 200,
+      width: 400,
     },
+    legendTextField2: {
+    textAlign: 'center', 
+    fontStyle: 'italic',
+    color: '#0f3381',
+    position:'absolute',
+    bottom:'96%',
+    right:'-5%',
+    fontSize: 18,
+    width: 400,
+  },
     inputAndroid: {
         fontSize: 16,
         paddingHorizontal: 10,

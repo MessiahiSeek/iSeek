@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Component  } from 'react';
-import { StyleSheet, SafeAreaView, ScrollView , Text, TouchableOpacity, Image,  ActivityIndicator, Alert} from 'react-native';
+import { StyleSheet, SafeAreaView, ScrollView , Text, TouchableOpacity, Image, Vibration,  ActivityIndicator, Alert} from 'react-native';
 import { CardTitle, CardContent, CardAction, CardButton, CardImage } from 'react-native-cards'; 
 import { render } from 'react-dom';
 import {/*DrawerActions*/ NavigationContainer, DefaultTheme, DarkTheme, useTheme} from '@react-navigation/native';
@@ -42,7 +42,24 @@ export const faqpage =({navigation}) => {
   const [isFetching, setIsFetching] = useState(false);
   const [recording, setRecording] = useState(null);
   const [hasPermission, setHasPermission] = useState(null);
+  const [cameraFocus, setCameraFocus] = useState(true);
 
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      
+      setCameraFocus(true);
+    });
+    // Return the function to unsubscribe from the event so it gets removed on unmount
+    return unsubscribe;
+  }, [navigation]);
+
+  React.useEffect(() =>{
+    const blurCamera = navigation.addListener('blur', () =>{
+      setCameraFocus(false);
+      setRecording(null);
+    });
+    return blurCamera;
+  }, [navigation]);
 
   const {colors} = useTheme();
 
@@ -61,11 +78,12 @@ export const faqpage =({navigation}) => {
     try {
         const info = await FileSystem.getInfoAsync(recording.getURI());
         const fileUri = info.uri;
-        var file = {
-          uri: fileUri,
-          type: 'audio/x-wav',
-          name: 'audio.wav'
-        }
+        const name = fileUri.split(".")[1] == "wav" ? 'audio.wav' : 'audio.m4a';
+            var file = {
+              uri: fileUri,
+              type: 'audio/x-wav',
+              name: name
+            }
         var body = new FormData();
         body.append('file',file);
         
@@ -146,6 +164,7 @@ export const faqpage =({navigation}) => {
     setHasPermission(status === 'granted');
     if (status !== 'granted') return;
     setIsRecording(true);
+    Vibration.vibrate();
     // some of these are not applicable, but are required
     await Audio.setAudioModeAsync({
       allowsRecordingIOS: true,
@@ -153,7 +172,7 @@ export const faqpage =({navigation}) => {
       playsInSilentModeIOS: true,
       shouldDuckAndroid: true,
       interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
-      playThroughEarpieceAndroid: true,
+      playThroughEarpieceAndroid: false,
   
     });
     const recording = new Audio.Recording();
@@ -242,10 +261,10 @@ export const faqpage =({navigation}) => {
   />
  </TouchableOpacity> 
 
- <TouchableOpacity style = {{position: 'absolute', borderRadius:"100%",bottom:'2%',left:'80%'}} onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}>
+ { cameraFocus && <TouchableOpacity style = {{position: 'absolute', borderRadius:"100%",bottom:'2%',left:'80%'}} onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}>
     {isFetching ?  <ActivityIndicator color="#0f0"></ActivityIndicator> :
          <Image source={require("./images/chat.png")} style={{ width: 55, height: 55 ,  borderRadius:100}} />}
-      </TouchableOpacity> 
+      </TouchableOpacity>  }
 
 
   </>

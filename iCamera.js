@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Component  } from 'react';
-import { Button, Text, View, TouchableOpacity, ref, StyleSheet, ActivityIndicator, Image, ImageBackground , Alert } from 'react-native';
+import { Button, Text, View, TouchableOpacity, Vibration, ref, StyleSheet, ActivityIndicator, Image, ImageBackground , Alert } from 'react-native';
 import { Camera } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
 import { Audio } from 'expo-av';
@@ -66,7 +66,11 @@ export const XCamera =({navigation}) => {
   const [picStr,setPicStr] = useState("");
   const [Load,SetLoad] = useState(false);
   const [cameraFocus, setCameraFocus] = useState(true);
+  
 
+  useEffect(() =>{
+      Speech.speak("Welcome... this is an application to aid the visually impaired with finding misplaced objects, you are now on the camera page")
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -133,6 +137,9 @@ export const XCamera =({navigation}) => {
              SetObjectsInPhoto(json.objects);
              console.log(json.objects);
              setIsPictureFetching(false);
+             const { sound } = Audio.Sound.createAsync(
+              require('./assets/small-bell-ringing-02.mp3'),{ shouldPlay: true }
+                );
             })
          });
          
@@ -145,6 +152,7 @@ export const XCamera =({navigation}) => {
     const { status } = await Permissions.askAsync(Permissions.AUDIO_RECORDING);
     setHasPermission(status === 'granted');
     if (status !== 'granted') return;
+    Vibration.vibrate();
     setIsRecording(true);
     // some of these are not applicable, but are required
     await Audio.setAudioModeAsync({
@@ -153,7 +161,7 @@ export const XCamera =({navigation}) => {
       playsInSilentModeIOS: true,
       shouldDuckAndroid: true,
       interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
-      playThroughEarpieceAndroid: true,
+      playThroughEarpieceAndroid: false,
   
     });
     const recording = new Audio.Recording();
@@ -165,6 +173,7 @@ export const XCamera =({navigation}) => {
       stopRecording();
     }
     setRecording(recording);
+    
   }
 
   const stopRecording = async () => {
@@ -178,11 +187,12 @@ export const XCamera =({navigation}) => {
   try {
       const info = await FileSystem.getInfoAsync(recording.getURI());
       const fileUri = info.uri;
-      var file = {
-        uri: fileUri,
-        type: 'audio/x-wav',
-        name: 'audio.wav'
-      }
+      const name = fileUri.split(".")[1] == "wav" ? 'audio.wav' : 'audio.m4a';
+            var file = {
+              uri: fileUri,
+              type: 'audio/x-wav',
+              name: name
+            }
       var body = new FormData();
       body.append('file',file);
       
@@ -234,6 +244,9 @@ export const XCamera =({navigation}) => {
                      setPhoto(json.pictureResponse);
                      SetObjectsInPhoto(json.objects);
                      setIsPictureFetching(false);
+                     const { sound } = Audio.Sound.createAsync(
+                      require('./assets/small-bell-ringing-02.mp3'),{ shouldPlay: true }
+                        );
                     })
                  });
              }  
@@ -315,7 +328,7 @@ const handleOnPressOut = () => {
     //et obj = objectsInPic.split('\n');
     
     if (objectsInPic.length === 1){
-      Speech.speak("The object in this picture is" + objectsInPic[0]);
+      Speech.speak("The object in this picture is " + objectsInPic[0]);
       return;
     }
     else{
@@ -442,10 +455,10 @@ const handleOnPressOut = () => {
       </TouchableOpacity>
         
 
-<TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'2%',left:'80%'}} onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}>
+{ cameraFocus && <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'2%',left:'80%'}} onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}>
     {isFetching ?  <ActivityIndicator color="#0f0"></ActivityIndicator> :
          <Image source={require("./images/chat.png")} style={{ width: 55, height: 55 ,  borderRadius:100}} />}
-      </TouchableOpacity> 
+      </TouchableOpacity> }
 
      <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'2%',left:'3%'}} onPress={() => {setType(type === Camera.Constants.Type.back? Camera.Constants.Type.front: Camera.Constants.Type.back);}}> 
          <Image source={require("./images/flipcamera.png")} style={{ width: 55, height: 55 ,  borderRadius:100}} />
