@@ -115,7 +115,7 @@ export const message =({navigation}) => {
          <Icon
          name="ios-menu"
          color="#ccc"
-         size={25}
+         size={35}
          onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
        />
       </TouchableOpacity> 

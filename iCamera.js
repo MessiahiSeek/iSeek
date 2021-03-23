@@ -58,7 +58,7 @@ export const XCamera =({navigation}) => {
   const [type, setType] = useState(Camera.Constants.Type.back);
   const [isRecording, setIsRecording] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
-  const [recording, setRecording] = useState(null);
+  const [recording, setRecording] = useState(undefined);
   //const useRef = useRef(null);
   const [photoJson,setPhoto] = useState("");
   const [objectsInPic,SetObjectsInPhoto] = useState([]);
@@ -93,6 +93,8 @@ export const XCamera =({navigation}) => {
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
+      if(recording != undefined){ recording.stopAndUnloadAsync()};
+      setRecording(undefined);      
       SetObjectsInPhoto("");
       setPhoto("");
       setCameraFocus(true);
@@ -103,7 +105,7 @@ export const XCamera =({navigation}) => {
 
   React.useEffect(() =>{
     const blurCamera = navigation.addListener('blur', () =>{
-      setRecording(null);
+      if (recording != undefined){recording.stopAndUnloadAsync();}
       setCameraFocus(false);
     });
     return blurCamera;
@@ -147,8 +149,12 @@ export const XCamera =({navigation}) => {
      
    }
 
+
   
-  startRecording = async () => {
+  
+  const startRecording = async () => {
+    
+    console.log('here');
     const { status } = await Permissions.askAsync(Permissions.AUDIO_RECORDING);
     setHasPermission(status === 'granted');
     if (status !== 'granted') return;
@@ -165,18 +171,24 @@ export const XCamera =({navigation}) => {
   
     });
     const recording = new Audio.Recording();
+    
     try {
-      await recording.prepareToRecordAsync(recordingOptions);
+    console.log('here2');
+    await recording.prepareToRecordAsync(recordingOptions);
       await recording.startAsync();
     } catch (error) {
       console.log(error);
       stopRecording();
     }
+    console.log("here before set")
     setRecording(recording);
+    console.log('here3');
+    
     
   }
 
   const stopRecording = async () => {
+    console.log(recording);
     setIsRecording(false);
     setIsFetching(true); 
 
@@ -187,6 +199,7 @@ export const XCamera =({navigation}) => {
   try {
       const info = await FileSystem.getInfoAsync(recording.getURI());
       const fileUri = info.uri;
+      setRecording(undefined);
       const name = fileUri.split(".")[1] == "wav" ? 'audio.wav' : 'audio.m4a';
             var file = {
               uri: fileUri,
@@ -286,14 +299,15 @@ export const XCamera =({navigation}) => {
       }
   } catch(error) {
       console.log('There was an error reading file', error);
-      stopRecording();
+      //stopRecording();
   }
-  setIsFetching(false);
 
     } catch (error) {
       console.log(error)
         // Do nothing -- we are already unloaded.
     }
+  setIsFetching(false);
+
   }, 1000);
 }
 
@@ -403,20 +417,20 @@ const handleOnPressOut = () => {
          <Image source={require("./images/cam.png")} style={{ width: 55, height: 55 , borderRadius:100}} onPress={ async () =>  this.changeScreenBack()}/>
       </TouchableOpacity>
 
-      <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'2%',left:'80%'}} onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}>
+     { cameraFocus && <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'2%',left:'80%'}} onPressIn={ () => startRecording()} onPressOut={ () => stopRecording()}>
     {isFetching ?  <ActivityIndicator color="#0f0"></ActivityIndicator> :
         <Image source={require("./images/chat.png")} style={{ width: 55, height: 55 ,  borderRadius:100}} />}
-      </TouchableOpacity> 
+      </TouchableOpacity> }
 
       <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'2%',left:'3%'}} onPress={() => this.ListObjects() }> 
          <Image source={require("./images/objects.jpg")} style={{ width: 55, height: 55 ,  borderRadius:100}} />
     </TouchableOpacity> 
 
-      <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'90%',left:'5%'}} /*onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}*/> 
+      <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'90%',left:'5%'}}onPress={() => navigation.dispatch(DrawerActions.openDrawer())} /*onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}*/> 
          <Icon
          name="ios-menu"
          color="#ccc"
-         size={25}
+         size={35}
          onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
        />
       </TouchableOpacity> 
@@ -425,7 +439,7 @@ const handleOnPressOut = () => {
          <Icon
          name="ios-browsers"
          color="#ccc"
-         size={25}
+         size={35}
          onPress = {() =>  this.SavePicture()}
        />
        </TouchableOpacity> 
@@ -455,7 +469,7 @@ const handleOnPressOut = () => {
       </TouchableOpacity>
         
 
-{ cameraFocus && <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'2%',left:'80%'}} onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}>
+{ cameraFocus && <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'2%',left:'80%'}} onPressIn={ () => startRecording()} onPressOut={ () => stopRecording()}>
     {isFetching ?  <ActivityIndicator color="#0f0"></ActivityIndicator> :
          <Image source={require("./images/chat.png")} style={{ width: 55, height: 55 ,  borderRadius:100}} />}
       </TouchableOpacity> }

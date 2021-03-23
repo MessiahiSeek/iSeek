@@ -56,144 +56,13 @@ export const faqpage =({navigation}) => {
   React.useEffect(() =>{
     const blurCamera = navigation.addListener('blur', () =>{
       setCameraFocus(false);
-      setRecording(null);
     });
     return blurCamera;
   }, [navigation]);
 
   const {colors} = useTheme();
 
-  const handleOnPressIn = () => {
-    startRecording();
-  };
   
-  const handleOnPressOut = () => {
-    stopRecording();
-    getTranscription();
-  };
-
-
-  const getTranscription = async () => {
-    setIsFetching(true);
-    try {
-        const info = await FileSystem.getInfoAsync(recording.getURI());
-        const fileUri = info.uri;
-        const name = fileUri.split(".")[1] == "wav" ? 'audio.wav' : 'audio.m4a';
-            var file = {
-              uri: fileUri,
-              type: 'audio/x-wav',
-              name: name
-            }
-        var body = new FormData();
-        body.append('file',file);
-        
-        const response = await fetch('http://iseek.cs.messiah.edu:5000/voiceStreamingCheck'/*'http://153.42.129.91:5000/voiceStreamingCheck'*/, {
-            method: 'POST',
-            body: body
-        });
-        const data = await response.json();
-        console.log(data)
-        if(data.amazonNeeded){
-        switch(data.textResponse){
-          case ("%0oc"):
-            navigation.navigate('Camera');
-            break; 
-          case("%0om"):
-            navigation.navigate('Messenger');
-            break;
-            case("%0st"):
-          
-            break;
-          case("%0tp"):
-            console.log("her")
-            navigation.navigate('Camera');
-            console.log("herer")
-            break;
-          case("%1si"):
-          case("%0ri"):
-          if(prediction === 'N/A'){
-            Speech.speak("We cannot determine  the object in the screen.")
-          }
-          else{
-            Speech.speak("The Object Currently Shown is " + prediction);
-          }
-          break;
-        default:
-          Speech.speak(data.textResponse);
-        }
-      }
-      else{
-        if(data.objectAvailability){
-
-          if(data.yesNoNeeded){
-            /*JOE*/
-            console.log("yes No needed")
-            console.log(data.objectChoice)
-            //YES NO NEEDED HERE
-            //if yes- pop up saying is this okay, if they click no ask them  to type again
-
-          }
-          else{
-
-          
-            console.log("Here")
-            console.log(data.objectChoice)
-            setInputVal(data.objectChoice)
-
-          }
-
-         }else{
-           Alert.alert("We currently dont support this object");
-         }
-
-      }
-    } catch(error) {
-        console.log('There was an error reading file', error);
-        Alert.alert("Error, please try again")
-        stopRecording();
-        // resetRecording();
-    }
-  
-    setIsFetching(false);
-  }
-
-
-
-  startRecording = async () => {
-    const { status } = await Permissions.askAsync(Permissions.AUDIO_RECORDING);
-    setHasPermission(status === 'granted');
-    if (status !== 'granted') return;
-    setIsRecording(true);
-    Vibration.vibrate();
-    // some of these are not applicable, but are required
-    await Audio.setAudioModeAsync({
-      allowsRecordingIOS: true,
-      interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
-      playsInSilentModeIOS: true,
-      shouldDuckAndroid: true,
-      interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
-      playThroughEarpieceAndroid: false,
-  
-    });
-    const recording = new Audio.Recording();
-    try {
-      await recording.prepareToRecordAsync(recordingOptions);
-      await recording.startAsync();
-    } catch (error) {
-      console.log(error);
-      stopRecording();
-    }
-    setRecording(recording);
-  }
-
-  const stopRecording = async () => {
-    setIsRecording(false);
-    try {
-        await recording.stopAndUnloadAsync();
-    } catch (error) {
-        // Do nothing -- we are already unloaded.
-    }
-}
 
 
   return(
@@ -229,6 +98,13 @@ export const faqpage =({navigation}) => {
               </Text>
               <Card.Divider style={{color: colors.text}}/>
               {/*--------------------------------------------------------------*/}
+              <Card.Title style={{color: colors.text}}>Sensory Queues</Card.Title>
+              <Text style={{marginBottom: 10, color: colors.text}}>
+                In order to use iSeek without sight we offer audio and senory clues. When using the chatbot button your phone will vibrate and play a bell sound to ensure you that you are pressing the correct button.
+                Once you have taken a picture a bell will play so that you may continue on with finding your desired objects. On the streaming page once you have said what object you want to find, your phone will begin vibrating and
+                playing a sound if that object is found.
+              </Text>
+              {/*--------------------------------------------------------------*/}
               <Card.Title style={{color: colors.text}}>Light Dark Mode</Card.Title>
               <Text style={{marginBottom: 10, color: colors.text}}>
               To use light and dark mode, open the drawer to the side of the app. This will give you the option to toggle a swtich based on your visual needs for light and dark text.
@@ -256,15 +132,12 @@ export const faqpage =({navigation}) => {
     <Icon
     name="ios-menu"
     color="#ccc"
-    size={25}
+    size={35}
     onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
   />
  </TouchableOpacity> 
 
- { cameraFocus && <TouchableOpacity style = {{position: 'absolute', borderRadius:"100%",bottom:'2%',left:'80%'}} onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}>
-    {isFetching ?  <ActivityIndicator color="#0f0"></ActivityIndicator> :
-         <Image source={require("./images/chat.png")} style={{ width: 55, height: 55 ,  borderRadius:100}} />}
-      </TouchableOpacity>  }
+ 
 
 
   </>

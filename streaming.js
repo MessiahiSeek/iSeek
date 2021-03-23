@@ -35,7 +35,7 @@ export const streamingPage = ({navigation}) => {
     const [hasPermission, setHasPermission] = useState(null);
     const [isFetching, setIsFetching] = useState(false);
     const [isRecording, setIsRecording] = useState(false);
-    const [recording, setRecording] = useState(null);
+    const [recording, setRecording] = useState(undefined);
 
 
     //for text input boxes
@@ -81,7 +81,8 @@ export const streamingPage = ({navigation}) => {
     };
     React.useEffect(() => {
       const unsubscribe = navigation.addListener('focus', () => {
-        
+        if(recording != undefined){ recording.stopAndUnloadAsync()};
+        setRecording(undefined);
         setCameraFocus(true);
       });
       // Return the function to unsubscribe from the event so it gets removed on unmount
@@ -91,7 +92,8 @@ export const streamingPage = ({navigation}) => {
     React.useEffect(() =>{
       const blurCamera = navigation.addListener('blur', () =>{
         setCameraFocus(false);
-        setRecording(null);
+        
+        if (recording != undefined){recording.stopAndUnloadAsync()}
       });
       return blurCamera;
     }, [navigation]);
@@ -272,11 +274,12 @@ const renderCameraView = () => {
       playsInSilentModeIOS: true,
       shouldDuckAndroid: true,
       interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
-      playThroughEarpieceAndroid: true,
+      playThroughEarpieceAndroid: false,
   
     });
 
     const recording = new Audio.Recording();
+    setRecording(recording);
     try {
       await recording.prepareToRecordAsync(recordingOptions);
       await recording.startAsync();
@@ -284,7 +287,7 @@ const renderCameraView = () => {
       console.log(error);
       stopRecording();
     }
-    setRecording(recording);
+    
   }
 
   const stopRecording = async () => {
@@ -296,6 +299,7 @@ const renderCameraView = () => {
         await recording.stopAndUnloadAsync();
         try {
             const info = await FileSystem.getInfoAsync(recording.getURI());
+            setRecording(undefined);
             const fileUri = info.uri;
             const name = fileUri.split(".")[1] == "wav" ? 'audio.wav' : 'audio.m4a';
             var file = {
@@ -347,6 +351,7 @@ const renderCameraView = () => {
               if(data.yesNoNeeded){
                 Speech.speak("We Support " + data.objectChoice  + " is this okay?");
                 Speech.speak("If yes, continue with scanning, if no please try another word.");
+                setInputVal(data.objectChoice);
               }
               else{
     
@@ -365,7 +370,7 @@ const renderCameraView = () => {
         } catch(error) {
             console.log('There was an error reading file', error);
             Alert.alert("Error, please try again")
-            stopRecording();
+            //stopRecording();
             // resetRecording();
         }
       
@@ -374,7 +379,7 @@ const renderCameraView = () => {
       console.log(error)
         // Do nothing -- we are already unloaded.
     }
-  }, 1000);
+  }, 3000);
 }
 
   const renderChatButton = () => {
@@ -386,7 +391,10 @@ const renderCameraView = () => {
     </View>
   }
   const checkForAvailability = async () =>{
-    
+    if (inputVal != ""){
+      if(inputVal.split(",") != inputVal){
+        inputVal = inputVal.split(",")[0]
+      }
     // console.log(inputVal);
     //fetch('http://ec2-3-23-33-73.us-east-2.compute.amazonaws.com:5000/streamingCheck',
     await fetch(/*'http://153.42.129.91:5000/streamingCheck'*/'http://iseek.cs.messiah.edu:5000/streamingCheck',
@@ -434,6 +442,7 @@ const renderCameraView = () => {
                 setIsDialogVisible(false);
                 setIsFetching(false);
             })
+          }
     }
   
   const renderTextInput = () => {
@@ -477,12 +486,12 @@ const renderCameraView = () => {
 
   const renderMenuButton = () => {
     return <View>
-    <TouchableOpacity style = {{position: 'absolute', top:'50%',left:'5%'}} onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}> 
+    <TouchableOpacity style = {{position: 'absolute', top:'50%',left:'5%'}} onPress={DrawerActions.openDrawer()} > 
     
          <Icon
          name="ios-menu"
          //color="#"
-         size={25}
+         size={35}
          onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
        />
       </TouchableOpacity>
