@@ -386,7 +386,12 @@ const renderCameraView = () => {
     return <View>
       <TouchableOpacity /*style = {{position: 'absolute', borderRadius:"100%",bottom:'9%',left:'75%'}}*/ onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}> 
     {isFetching ?  <ActivityIndicator color="#0f0"></ActivityIndicator> :
-         <Image source={require("./images/chat.png")} style={{ width: 55, height: 55 ,  borderRadius:100}} />}
+         <Icon
+         name="mic"
+         color="#fff"
+         size={40}
+         onPressIn={ () => startRecording()} onPressOut={ () => stopRecording()}
+       />}
       </TouchableOpacity> 
     </View>
   }
@@ -409,7 +414,7 @@ const renderCameraView = () => {
              }),
            }).then((response) => response.json())
            .then((json) => {
-             console.log("HI");
+             console.log(json);
              if(json.objectAvailability){
 
               if(json.yesNoNeeded){
@@ -420,7 +425,7 @@ const renderCameraView = () => {
                   [
                     {
                       text: "No",
-                      onPress: () => console.log("Canceled"),
+                      onPress: () => setInputVal(""),
                       style: "cancel"
                     },
                     { text: "Yes", onPress: () => setInputVal(json.objectChoice) }
@@ -449,11 +454,17 @@ const renderCameraView = () => {
     return <Provider>
       <View>
       <TouchableOpacity onPress={() => {
+        setInputVal("");
         setIsDialogVisible(true);
         setCameraFocus(false);
       }
       }>
-      <Image source={require("./images/binoculars.png")} style={{ width: 55, height: 55 ,  borderRadius:100}} />
+      <Icon
+         name="md-search"
+         color="#fff"
+         size={40}
+         onPressIn={ () => startRecording()} onPressOut={ () => stopRecording()}
+       />
       </TouchableOpacity> 
       <Portal >
         <Dialog visible={isDialogVisible}
@@ -510,7 +521,7 @@ const renderCameraView = () => {
       <Text style={styles.legendTextField}>  Prediction: {prediction.split(",")[0]}</Text>
       <View style={styles.body}>
       </View>  
-        <View style = {{position: 'absolute',  zIndex: 1200, borderRadius:100,bottom:'2%',left:'3%'}}  >{ renderTextInput() }</View>
+        <View style = {{position: 'absolute',  zIndex: 1200, borderRadius:100,bottom:'2%',left:'5%'}}  >{ renderTextInput() }</View>
       <View style = {{position: 'absolute', zIndex: 1200, borderRadius:100,bottom:'2%',left:'80%'}}>{ cameraFocus && renderChatButton() }</View>
   </View>
 

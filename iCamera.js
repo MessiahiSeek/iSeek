@@ -8,6 +8,7 @@ import * as FileSystem from 'expo-file-system';
 import { render } from 'react-dom';
 import * as Speech from 'expo-speech';
 import Icon from 'react-native-vector-icons/Ionicons';
+import * as Icon2 from 'react-native-vector-icons/FontAwesome';
 import ActionButton from 'react-native-action-button';
 import { YellowBox } from 'react-native'
 import * as ImagePicker from 'expo-image-picker';
@@ -413,32 +414,47 @@ const handleOnPressOut = () => {
             {(Load) && (<ActivityIndicator alignContent="center" size="large" color="#000" 
             style={{position:"absolute"}}> </ActivityIndicator>)}
 
-      <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'2%',left:'42.5%'}} onPress={ async () =>  this.changeScreenBack()}>
-         <Image source={require("./images/cam.png")} style={{ width: 55, height: 55 , borderRadius:100}} onPress={ async () =>  this.changeScreenBack()}/>
+      <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'3%',left:'45%'}} onPress={ () =>  changeScreenBack()}>
+      <Icon
+        name="home"
+        color="#fff"
+        size={45}
+        onPress={  () =>  changeScreenBack()}
+      />
       </TouchableOpacity>
 
-     { cameraFocus && <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'2%',left:'80%'}} onPressIn={ () => startRecording()} onPressOut={ () => stopRecording()}>
+     { cameraFocus && <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'2%',left:'85%'}} onPressIn={ () => startRecording()} onPressOut={ () => stopRecording()}>
     {isFetching ?  <ActivityIndicator color="#0f0"></ActivityIndicator> :
-        <Image source={require("./images/chat.png")} style={{ width: 55, height: 55 ,  borderRadius:100}} />}
+        <Icon
+        name="mic"
+        color="#fff"
+        size={45}
+        onPressIn={ () => startRecording()} onPressOut={ () => stopRecording()}
+      />}
       </TouchableOpacity> }
 
-      <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'2%',left:'3%'}} onPress={() => this.ListObjects() }> 
-         <Image source={require("./images/objects.jpg")} style={{ width: 55, height: 55 ,  borderRadius:100}} />
+      <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'2%',left:'5%'}} onPress={() => this.ListObjects() }> 
+      <Icon
+         name="md-megaphone"
+         color="#fff"
+         size={45}
+         onPress={() => this.ListObjects() }
+       />
     </TouchableOpacity> 
 
-      <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'90%',left:'5%'}}onPress={() => navigation.dispatch(DrawerActions.openDrawer())} /*onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}*/> 
+      <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'89.5%',left:'7%'}}onPress={() => navigation.dispatch(DrawerActions.openDrawer())} /*onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}*/> 
          <Icon
          name="ios-menu"
-         color="#ccc"
+         color="#fff"
          size={35}
          onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
        />
       </TouchableOpacity> 
 
-      <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'90%',left:'90%'}} onPress={()=>this.SavePicture()} /*onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}*/> 
+      <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'90%',left:'85%'}} onPress={()=>this.SavePicture()} /*onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}*/> 
          <Icon
-         name="ios-browsers"
-         color="#ccc"
+         name="save"
+         color="#fff"
          size={35}
          onPress = {() =>  this.SavePicture()}
        />
@@ -465,34 +481,49 @@ const handleOnPressOut = () => {
       
     {/* for picture taking */} 
       <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'2%',left:'42.5%'}} onPress={ async () =>  this.snap()}>
-         <Image source={require("./images/cam.png")} style={{ width: 55, height: 55 , borderRadius:100}} onPress={ async () =>  this.snap()}/>
+         <Icon
+         onPress={ async () =>  this.snap()}
+         name="camera"
+         color="#fff"
+         size={55}
+       />
       </TouchableOpacity>
         
 
-{ cameraFocus && <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'2%',left:'80%'}} onPressIn={ () => startRecording()} onPressOut={ () => stopRecording()}>
+{ cameraFocus && <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'3%',left:'80%'}} onPressIn={ () => startRecording()} onPressOut={ () => stopRecording()}>
     {isFetching ?  <ActivityIndicator color="#0f0"></ActivityIndicator> :
-         <Image source={require("./images/chat.png")} style={{ width: 55, height: 55 ,  borderRadius:100}} />}
+         <Icon
+         name="mic"
+         color="#fff"
+         size={40}
+         onPressIn={ () => startRecording()} onPressOut={ () => stopRecording()}
+       />}
       </TouchableOpacity> }
 
-     <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'2%',left:'3%'}} onPress={() => {setType(type === Camera.Constants.Type.back? Camera.Constants.Type.front: Camera.Constants.Type.back);}}> 
-         <Image source={require("./images/flipcamera.png")} style={{ width: 55, height: 55 ,  borderRadius:100}} />
+     <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'2%',left:'5%'}} onPress={() => {setType(type === Camera.Constants.Type.back? Camera.Constants.Type.front: Camera.Constants.Type.back);}}> 
+     <Icon
+         name="camera-reverse-outline"
+         color="#fff"
+         size={50}
+         onPress={() => {setType(type === Camera.Constants.Type.back? Camera.Constants.Type.front: Camera.Constants.Type.back);}}
+       />
     </TouchableOpacity> 
 
-      <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'90%',left:'5%'}} onPress={() => navigation.dispatch(DrawerActions.openDrawer())}/*onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}*/> 
+      <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'89.5%',left:'5%'}} onPress={() => navigation.dispatch(DrawerActions.openDrawer())}/*onPressIn={handleOnPressIn} onPressOut={handleOnPressOut}*/> 
     
          <Icon
          name="ios-menu"
-         color="#ccc"
-         size={25}
+         color="#fff"
+         size={35}
          onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
        />
       </TouchableOpacity> 
 
-      <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'90%',left:'90%'}} onPress = {() =>  this.getCameraPic()} >
+      <TouchableOpacity style = {{position: 'absolute', borderRadius:100,bottom:'90%',left:'85%'}} onPress = {() =>  this.getCameraPic()} >
          <Icon
          name="ios-browsers"
-         color="#ccc"
-         size={25}
+         color="#fff"
+         size={35}
          onPress = {() =>  this.getCameraPic()}
        />
     </TouchableOpacity> 
