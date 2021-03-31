@@ -120,7 +120,7 @@ export const streamingPage = ({navigation}) => {
         await tf.ready();
         //load the mobilenet model and save it in state
         setMobilenetModel(await loadMobileNetModel());
-        console.log("reached here");
+        Vibration.vibrate();
         setFrameworkReady(true);
       })();
     }
@@ -214,13 +214,15 @@ const getPrediction = async(tensor) => {
 Helper function to handle the camera tensor streams. Here, to keep up reading input streams, we use requestAnimationFrame JS method to keep looping for getting better predictions (until we get one with enough confidence level).
 More info on RAF: https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame
 -------------------------------------------------------------------------*/
-const handleCameraStream = (imageAsTensors) => {
+const handleCameraStream = (imageAsTensors/*, updatePreview, gl*/) => {
     const loop = async () => {
       const nextImageTensor = await imageAsTensors.next().value;
       await getPrediction(nextImageTensor);
-      requestAnimationFrameId = requestAnimationFrame(loop);
+      
       //updatePreview();
       //gl.endFrameEXP();
+
+      requestAnimationFrame(loop);
     };
     loop();
   }
@@ -233,7 +235,7 @@ https://js.tensorflow.org/api_react_native/0.2.1/#cameraWithTensors
 -----------------------------------------------------------------------*/
 const renderCameraView = () => {
     return <View style={styles.cameraView}>
-                <TensorCamera
+                { frameworkReady ? <TensorCamera
                   style={styles.camera}
                   type={Camera.Constants.Type.back}
                   zoom={0}
@@ -243,9 +245,13 @@ const renderCameraView = () => {
                   resizeWidth={tensorDims.width}
                   resizeDepth={3}
                   onReady={(imageAsTensors) => handleCameraStream(imageAsTensors)}
+                  //onReady={this.handleCameraStream}
                   autorender={true}
-                />
-                
+                /> :
+                <ActivityIndicator color="#000" size="large" style={{position:"absolute", top: 0, left: 0, 
+                right: 0, bottom: 0, 
+                justifyContent: 'center', 
+                alignItems: 'center'}}/> }
             </View>;
   }
 
@@ -515,8 +521,8 @@ const renderCameraView = () => {
     <View style={styles.container}>
       { renderMenuButton() }
       <View style={styles.cameraView}>
-        { cameraFocus && renderCameraView() }
-      </View>
+        { cameraFocus &&   renderCameraView() }
+            </View>
       <Text style={styles.legendTextField2}>  Searching For: {inputVal}</Text>
       <Text style={styles.legendTextField}>  Prediction: {prediction.split(",")[0]}</Text>
       <View style={styles.body}>
