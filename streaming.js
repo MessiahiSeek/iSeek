@@ -31,7 +31,6 @@ import {cameraWithTensors} from '@tensorflow/tfjs-react-native';
 console.disableYellowBox = true;
 
 export const streamingPage = ({navigation}) => {
-    const [predictionFound, setPredictionFound] = useState(false);
     const [hasPermission, setHasPermission] = useState(null);
     const [isFetching, setIsFetching] = useState(false);
     const [isRecording, setIsRecording] = useState(false);
@@ -189,24 +188,25 @@ const getPrediction = async(tensor) => {
 
     //only attempt translation when confidence is higher than 20%
     
-    if(prediction[0].className == inputVal) {
+    if(prediction[0].className == inputVal && prediction[0].probability > 0.4) {
       console.log(inputVal);
       Vibration.vibrate();
       const { sound } = Audio.Sound.createAsync(
         require('./assets/small-bell-ringing-02.mp3'),{ shouldPlay: true }
           );
           console.log('Playing Sound');
+          cancelAnimationFrame(requestAnimationFrameId);
     }
       
 
 
-    if(prediction[0].probability > 0.4) {
-      setPrediction(prediction[0].className)
+    /*if(prediction[0].probability > 0.4) {
+      //setPrediction(prediction[0].className)
       cancelAnimationFrame(requestAnimationFrameId);
-      setPredictionFound(true);
+      //setPredictionFound(true);
       
       
-    }
+    }*/
   }
   
 
@@ -524,7 +524,7 @@ const renderCameraView = () => {
         { cameraFocus &&   renderCameraView() }
             </View>
       <Text style={styles.legendTextField2}>  Searching For: {inputVal}</Text>
-      <Text style={styles.legendTextField}>  Prediction: {prediction.split(",")[0]}</Text>
+      {/*<Text style={styles.legendTextField}>  Prediction: {prediction.split(",")[0]}</Text>*/}
       <View style={styles.body}>
       </View>  
         <View style = {{position: 'absolute',  zIndex: 1200, borderRadius:100,bottom:'2%',left:'5%'}}  >{ renderTextInput() }</View>
