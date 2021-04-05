@@ -12,6 +12,7 @@ import Animated, { color } from 'react-native-reanimated';
 import { Container } from 'semantic-ui-react';
 import { View } from '@shoutem/ui';
 import { EventRegister } from 'react-native-event-listeners';
+import * as Linking from 'expo-linking';
 
 
 // Credit for this code goes to @ReactNativeTutorials
@@ -23,6 +24,10 @@ function Sidebar({progress, ...props}) {
         inputRange: [0, 1],
         outputRange: [-100, 0],
     });
+    _handlePress = () => {
+        Linking.openURL('http://iseek.cs.messiah.edu:5000/objectRequest');
+        
+      };
     return (
         <NavigationContainer independent={true}>
             <Header style={{backgroundColor: colors.card, borderBottomWidth: 0}}>
@@ -69,7 +74,9 @@ function Sidebar({progress, ...props}) {
                 </List>
 
         </Content>
+        <Text onPress={this._handlePress} style={{fontSize: 20, borderTopWidth:10, left:"8%", color:"#0000A5", textDecorationLine: 'underline'}} >Help us Out!</Text>
         <Footer style={{backgroundColor: colors.card, borderTopWidth: 0}}/>
+        
         </NavigationContainer>
     );
 }
