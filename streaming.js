@@ -188,7 +188,7 @@ const getPrediction = async(tensor) => {
 
     //only attempt translation when confidence is higher than 20%
     
-    if(prediction[0].className == inputVal && prediction[0].probability > 0.4) {
+    if(prediction[0].className == inputVal && prediction[0].probability > 0.2) {
       console.log(inputVal);
       Vibration.vibrate();
       const { sound } = Audio.Sound.createAsync(
