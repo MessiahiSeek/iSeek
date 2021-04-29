@@ -3,7 +3,7 @@
 ### What is iSeek?
 iSeek is an app designed to assist the visually impaired with finding items
 
-### How do I use iSeek??
+### How do I use iSeek?
 As simple as opening the app and taking a photo!
 
 ## Features
@@ -19,6 +19,9 @@ As simple as opening the app and taking a photo!
 - Ability to talk into your phone and receive a response from the chatbot
 ### Dark Mode
 - Ability to change the color scheme from light to dark!
+
+### State of iSeek
+- iSeek, while the possibility of new features is endless, development has been halted since we have our MVP.
 
 
 ## To run the application locally
